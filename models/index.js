@@ -18,6 +18,15 @@ module.exports = function(app) {
     token: Sequelize.STRING
   });
 
+  User.sync()
+    .error(function(e) {
+      console.log('error syncing with db');
+      console.log(e);
+    })
+    .success(function() {
+      console.log('sync worked');
+    });
+
   return {
     sequelize: sequelize,
     User: User
