@@ -12,6 +12,7 @@ module.exports = function(app) {
   });
 
   User = sequelize.define('User', {
+    email: Sequelize.STRING,
     firstname: Sequelize.STRING,
     lastname: Sequelize.STRING,
     service: Sequelize.STRING,

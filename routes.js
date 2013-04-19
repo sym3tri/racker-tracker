@@ -27,7 +27,7 @@ var routes = function(app) {
 
     var User = app.get('models').User;
     var user = User.build({
-      username: req.body.username,
+      email: req.body.email,
       firstname: req.body.firstname,
       lastname: req.body.lastname,
       service: req.body.service,

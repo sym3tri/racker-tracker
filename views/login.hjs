@@ -7,15 +7,25 @@
   <body>
     <h1>{{ title }}</h1>
     <form method="POST" action="/login">
-      <select name="service">
-        <option value="nike">Nike</option>
-        <option value="fitbit">FitBit</option>
-      </select>
-      Username: <input type="text" name="username"/>
-      First Name: <input type="text" name="firstname"/>
-      Last Name: <input type="text" name="lastname"/>
-      Auth Token: <input type="text" name="token"/>
-      (<a href="https://developer.nike.com/console">generate here</a>)
+      <div>
+        <select name="service">
+          <option value="nike">Nike</option>
+          <option value="fitbit">FitBit</option>
+        </select>
+      </div>
+      <div>
+        Email: <input type="text" name="email"/>
+      </div>
+      <div>
+        First Name: <input type="text" name="firstname"/>
+      </div>
+      <div>
+        Last Name: <input type="text" name="lastname"/>
+      </div>
+      <div>
+        Auth Token: <input type="text" name="token"/>
+        (<a href="https://developer.nike.com/console">generate here</a>)
+      </div>
       <input type="submit" value="login"/>
     </form>
   </body>
