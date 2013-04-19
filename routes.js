@@ -34,18 +34,21 @@ var routes = function(app) {
       //token: req.body.token
     //});
 
+    var userValues = {
+      email: req.body.email,
+      firstname: req.body.firstname,
+      lastname: req.body.lastname,
+      service: req.body.service,
+      token: req.body.token
+    };
+
     User.find({ where: { email: req.body.email } })
       .success(function(user) {
-        if (!user) {
-          user = User.build();
+        if (user) {
+          user.updateAttributes(userValues);
+        } else {
+          user = User.build(userValues);
         }
-        user.updateAttributes({
-          email: req.body.email,
-          firstname: req.body.firstname,
-          lastname: req.body.lastname,
-          service: req.body.service,
-          token: req.body.token
-        });
 
         user.save()
           .error(function(e) {
