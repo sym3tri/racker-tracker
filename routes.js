@@ -29,7 +29,7 @@ var routes = function(app) {
     var user = User.build({
       username: req.body.username,
       firstname: req.body.firstname,
-      lastname: req.body.firstname,
+      lastname: req.body.lastname,
       service: req.body.service,
       token: req.body.token
     });
