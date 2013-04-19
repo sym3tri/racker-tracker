@@ -36,18 +36,28 @@ var routes = function(app) {
 
     User.find({ where: { email: req.body.email } })
       .success(function(user) {
-        console.log(user);
-      });
+        if (!user) {
+          user = User.build();
+        }
+        user.updateAttributes({
+          email: req.body.email,
+          firstname: req.body.firstname,
+          lastname: req.body.lastname,
+          service: req.body.service,
+          token: req.body.token
+        });
 
-    user.save()
-      .error(function(e) {
-        console.log('DB ERROR!!!');
-        console.log(e);
-        res.send('ERROR: ' + e.code);
-      })
-      .success(function() {
-        console.log('SAVE OK!!!');
-        res.send('it worked! thanks ' + req.body.firstname);
+        user.save()
+          .error(function(e) {
+            console.log('DB ERROR!!!');
+            console.log(e);
+            res.send('ERROR: ' + e.code);
+          })
+          .success(function() {
+            console.log('SAVE OK!!!');
+            res.send('it worked! thanks ' + req.body.firstname);
+          });
+
       });
 
     // retrieve token
