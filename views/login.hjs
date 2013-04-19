@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>{{ title }}</h1>
+    <form method="POST" action="/login">
+      <select name="service">
+        <option value="nike">Nike</option>
+        <option value="fitbit">FitBit</option>
+      </select>
+      Username: <input type="text" name="username"/>
+      Password: <input type="password" name="password"/>
+      Auth Token: <input type="text" name="token"/>
+      (<a href="https://developer.nike.com/console">generate here</a>)
+      <input type="submit" value="login"/>
+    </form>
+  </body>
+</html>
