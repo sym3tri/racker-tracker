@@ -23,18 +23,15 @@ var routes = function(app) {
   });
 
   app.post('/login', function(req, res) {
-    var service = req.body.service,
-        username = req.body.username,
-        password = req.body.password;
-
     console.log(req.body);
-
 
     var User = app.get('models').User;
     var user = User.build({
-      firstname: 'test',
-      service: service,
-      username: username
+      username: req.body.username,
+      firstname: req.body.firstname,
+      lastname: req.body.firstname,
+      service: req.body.service,
+      token: req.body.token
     });
 
     user.save()
@@ -45,7 +42,7 @@ var routes = function(app) {
       })
       .success(function() {
         console.log('SAVE OK!!!');
-        res.send('ok: ' + username);
+        res.send('it worked! thanks ' + req.body.firstname);
       });
 
     // retrieve token

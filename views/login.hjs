@@ -12,7 +12,8 @@
         <option value="fitbit">FitBit</option>
       </select>
       Username: <input type="text" name="username"/>
-      Password: <input type="password" name="password"/>
+      First Name: <input type="text" name="firstname"/>
+      Last Name: <input type="text" name="lastname"/>
       Auth Token: <input type="text" name="token"/>
       (<a href="https://developer.nike.com/console">generate here</a>)
       <input type="submit" value="login"/>
