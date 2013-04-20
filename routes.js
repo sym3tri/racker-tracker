@@ -26,13 +26,6 @@ var routes = function(app) {
     console.log(req.body);
 
     var User = app.get('models').User;
-    //var user = User.build({
-      //email: req.body.email,
-      //firstname: req.body.firstname,
-      //lastname: req.body.lastname,
-      //service: req.body.service,
-      //token: req.body.token
-    //});
 
     var userValues = {
       email: req.body.email,
