@@ -1,6 +1,6 @@
 {
-  "dbname": "",
-  "dbhostname": "",
-  "dbusername": "",
+  "dbname": "tracker",
+  "dbhost": "127.0.0.1",
+  "dbusername": "root",
   "dbpassword": ""
 }

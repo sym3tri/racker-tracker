@@ -4,12 +4,15 @@ module.exports = function(app) {
   var config, sequelize, User;
 
   config = app.get('config');
+  console.log(config);
   sequelize = new Sequelize(
       config.dbname,
       config.dbusername,
-      config.dbpassword, {
-    host: '8b59a01c3cb8257733dc2eff635e4ae2c248ee0f.rackspaceclouddb.com'
-  });
+      config.dbpassword || null,
+      {
+        host: config.dbhost
+      }
+  );
 
   User = sequelize.define('User', {
     email: { type: Sequelize.STRING, unique: true},
