@@ -1,10 +1,9 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(app) {
-  var config, sequelize, User;
+  var config, sequelize, User, Stats;
 
   config = app.get('config');
-  console.log(config);
   sequelize = new Sequelize(
       config.dbname,
       config.dbusername,
@@ -24,16 +23,34 @@ module.exports = function(app) {
 
   User.sync()
     .error(function(e) {
-      console.log('error syncing with db');
+      console.log('error syncing User with db');
       console.log(e);
     })
     .success(function() {
-      console.log('sync worked');
+      console.log('User sync worked');
     });
+
+  Stats = sequelize.define('Stats', {
+    userid: Sequelize.INTEGER,
+    date: Sequelize.DATE,
+    calories: Sequelize.INTEGER,
+    steps: Sequelize.INTEGER
+  });
+
+  Stats.sync()
+    .error(function(e) {
+      console.log('error syncing Stats with db');
+      console.log(e);
+    })
+    .success(function() {
+      console.log('Stats sync worked');
+    });
+
 
   return {
     sequelize: sequelize,
-    User: User
+    User: User,
+    Stats: Stats
     //User: sequelize.import(__dirname + '/User')
   };
 };
