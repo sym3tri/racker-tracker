@@ -1,56 +1,41 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(app) {
-  var config, sequelize, User, Stats;
+  var config, sequelize, models;
 
+  // Get config options from the app.
   config = app.get('config');
+
+  // Instance of the ORM database driver.
   sequelize = new Sequelize(
-      config.dbname,
-      config.dbusername,
-      config.dbpassword || null,
-      {
-        host: config.dbhost
-      }
-  );
+        config.dbname,
+        config.dbusername,
+        config.dbpassword || null,
+        {
+          host: config.dbhost,
+          define: {
+            charset: 'utf8',
+            collate: 'utf8_general_ci'
+          }
+        }
+    );
 
-  User = sequelize.define('User', {
-    email: { type: Sequelize.STRING, unique: true},
-    firstname: Sequelize.STRING,
-    lastname: Sequelize.STRING,
-    service: Sequelize.STRING,
-    token: Sequelize.STRING
-  });
-
-  User.sync()
-    .error(function(e) {
-      console.log('error syncing User with db');
-      console.log(e);
-    })
-    .success(function() {
-      console.log('User sync worked');
-    });
-
-  Stats = sequelize.define('Stats', {
-    userid: Sequelize.INTEGER,
-    date: Sequelize.DATE,
-    calories: Sequelize.INTEGER,
-    steps: Sequelize.INTEGER
-  });
-
-  Stats.sync()
-    .error(function(e) {
-      console.log('error syncing Stats with db');
-      console.log(e);
-    })
-    .success(function() {
-      console.log('Stats sync worked');
-    });
-
-
-  return {
-    sequelize: sequelize,
-    User: User,
-    Stats: Stats
-    //User: sequelize.import(__dirname + '/User')
+  // Import all models.
+  models = {
+    User: sequelize.import(__dirname + '/user'),
+    Stats: sequelize.import(__dirname + '/stats')
   };
-};
+
+  // Sync all models/tables.
+  sequelize.sync()
+    .error(function(e) {
+      console.log('ERROR: syncing models to database!');
+      console.log(e);
+    })
+    .success(function() {
+      console.log('OK: synced models to database.');
+    });
+
+  return models;
+
+}

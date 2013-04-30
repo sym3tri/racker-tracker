@@ -1,10 +1,23 @@
-//var Sequelize = require('sequelize'),
-    //sequelize = require('./index').sequelize;
+module.exports = function(sequelize, DataTypes) {
+  var User = sequelize.define('User', {
+    email: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+      isEmail: true
+    },
+    firstname: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      notEmpty: true
+    },
+    lastname: {
+      type: DataTypes.STRING, allowNull: false,
+      notEmpty: true
+    },
+    service: DataTypes.ENUM('nike', 'fitbit'),
+    token: DataTypes.STRING
+  });
 
-//var User = sequelize.define('User', {
-  //firstname: Sequelize.STRING,
-  //lastname: Sequelize.STRING,
-  //service: Sequelize.STRING,
-  //token: Sequelize.STRING,
-  //updated: Sequelize.DATE
-//});
+  return User;
+}

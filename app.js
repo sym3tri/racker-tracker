@@ -1,13 +1,10 @@
-/**
- * Module dependencies.
- */
-
 var express = require('express'),
   http = require('http'),
   path = require('path'),
   fs = require('fs'),
   config = JSON.parse(fs.readFileSync('./config.json', 'utf8')),
-  app = module.exports = express();
+  app = module.exports = express(),
+  routes;
 
 // all environments
 app.set('config', config);
@@ -29,11 +26,7 @@ if ('development' === app.get('env')) {
   app.use(express.errorHandler());
 }
 
-var routes = require('./routes')(app);
-
-//app.get('/', routes.index);
-//app.get('/login', login.form);
-//app.post('/login', login.result);
+routes = require('./routes')(app);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
