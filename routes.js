@@ -22,7 +22,7 @@ var routes = function(app) {
     res.render('index', { title: 'Racker Tracker' });
   });
 
-  app.post('/login', function(req, res) {
+  app.post('/register', function(req, res) {
     console.log(req.body);
 
     var User = app.get('models').User;
@@ -51,7 +51,7 @@ var routes = function(app) {
           })
           .success(function() {
             console.log('SAVE OK!!!');
-            res.send('it worked! thanks ' + req.body.firstname);
+            res.send('it worked! thanks ' + user.getFullname());
           });
 
       });
@@ -61,8 +61,26 @@ var routes = function(app) {
     // save token in DB
   });
 
-  app.get('/login', function(req, res){
-    res.render('login', { title: 'Login' });
+  app.get('/register', function(req, res){
+    res.render('register', { title: 'Register' });
+  });
+
+
+
+  app.get('/users', function(req, res) {
+
+    app.get('sequelize')
+    .query("SELECT * FROM Users").success(function(userRows) {
+
+      console.log(userRows);
+
+      res.render('users', {
+        title: 'User List',
+        users: userRows
+      });
+
+    });
+
   });
 
 };

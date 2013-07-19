@@ -36,6 +36,9 @@ module.exports = function(app) {
       console.log('OK: synced models to database.');
     });
 
-  return models;
+  return {
+    models: models,
+    sequelize: sequelize
+  };
 
 }
