@@ -25,6 +25,7 @@
       <div>
         Auth Token: <input type="text" name="token"/>
         (<a href="https://developer.nike.com/console">generate here</a>)
+        <a href="/register/fitbit">Fitbit</a>
       </div>
       <input type="submit" value="Register"/>
     </form>
