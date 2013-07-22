@@ -6,8 +6,8 @@
   "fitbit": {
   	"consumer_key": "",
   	"consumer_secret": "",
-  	"request_token_url": "http://api.fitbit.com/oauth/request_token",
-  	"access_token_url": "http://api.fitbit.com/oauth/access_token",
-  	"authorize_url": "http://www.fitbit.com/oauth/authorize"
+  	"request_token_url": "https://api.fitbit.com/oauth/request_token",
+  	"access_token_url": "https://api.fitbit.com/oauth/access_token",
+  	"authorize_url": "https://www.fitbit.com/oauth/authorize"
   }
 }

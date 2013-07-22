@@ -12,7 +12,7 @@ app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'hjs');
 app.set('models', require('./models')(app).models);
-app.set('sequelize', require('./models')(app).sequelize);
+//app.set('sequelize', require('./models')(app).sequelize);
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());

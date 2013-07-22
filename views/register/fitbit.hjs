@@ -7,6 +7,5 @@
   <body>
   <h1>Hello Fitbit user</h1>
   <h2>{{message}}</h2>
-  <p>count: {{count}}</p>
   </body>
 </html>

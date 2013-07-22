@@ -69,16 +69,8 @@ var routes = function(app) {
     res.render('register', { title: 'Register' });
   });
 
-var count = 0;
-var user = {
-  state: 0,
-  oauth_token: null,
-  secret: null
-};
   app.get('/register/reset', function(req, res) {
-    user.state = 0;
-    user.token = null;
-    user.secret = null;
+    req.session.fitbit = {};
     res.redirect("/register/fitbit");
   });
   app.get('/register/fitbit', function(req, res) {
@@ -97,30 +89,31 @@ var user = {
         "User-Agent": "racker-tracker"
       }
     );
+    if(!req.session.fitbit) {
+      req.session.fitbit = {};
+    }
 
-    if(0 === user.state) {
+    if(!req.session.fitbit.token && !req.session.fitbit.secret) {
       oauth.getOAuthRequestToken(function(error, oauth_token, oauth_token_secret, results) {
         if(error) {
           console.error("error in OAuthRequestToken: ", JSON.stringify(error));
         }
         else {
-          console.log('requestoken results: ' + sys.inspect(results));
-          user.secret = oauth_token_secret;
-          user.state = 1;
+          req.session.fitbit = {
+            secret: oauth_token_secret
+          };
           res.redirect(fitbit_config.authorize_url + "?oauth_token=" + oauth_token);
         }
       });
       return;
     }
-    else if(1 === user.state) {
+    else if(!req.session.fitbit.token && req.session.fitbit.secret) {
       console.log("oauth_token: "+req.query.oauth_token);
-      oauth.getOAuthAccessToken(req.query.oauth_token, user.secret, req.query.oauth_verifier, accessTokenCallback);
+      oauth.getOAuthAccessToken(req.query.oauth_token, req.session.fitbit.secret, req.query.oauth_verifier, accessTokenCallback);
       return;
     }
-    count++;
     res.render('register/fitbit', {
       title: 'Test Fitbit',
-      count: count,
       message: message
     });
 
@@ -129,66 +122,105 @@ var user = {
         message = "error in accessTokenCallback" + JSON.stringify(error);
       }
       else {
-        user.token = access_token;
-        user.secret = access_token_secret;
-        message = "everything is good: " + JSON.stringify({
-          access_token: access_token,
-          access_token_secret: access_token_secret,
-          results: results
+        req.session.fitbit = {
+          token: access_token,
+          secret: access_token_secret
+        }
+        var User = app.get('models').User;
+        var Token = app.get('models').Token;
+        User.find(1).success(function(user) {
+          var token = Token.build({
+            service: 'fitbit',
+            token: access_token,
+            secret: access_token_secret,
+            userid: user.id
+          });
+          token.save();
         });
         res.redirect("/register/fitbit-profile");
+        return;
       }
       res.render('register/fitbit', {
         title: 'Test Fitbit',
-        count: count,
         message: message
       });
     }
   });
+
   app.get('/register/fitbit-profile', function(req, res) {
+    var Token = app.get('models').Token;
+    var Stats = app.get('models').Stats;
     var fitbit_config = app.get('config').fitbit;
 
-    var oauth = new OAuth.OAuth(
-      fitbit_config.request_token_url,
-      fitbit_config.access_token_url,
-      fitbit_config.consumer_key,
-      fitbit_config.consumer_secret,
-      "1.0",
-      null,
-      "HMAC-SHA1",
-      {
-        "User-Agent": "racker-tracker"
+    Token.find(2).success(function(token) {
+      if(!token) {
+        res.redirect("/register/fitbit");
       }
-    );
-    oauth.get(ENDPOINTS.fitbit.base + ENDPOINTS.fitbit.profile,// + '?' + querystring.stringify(params),
-      user.token, user.secret, function(error, data, response) {
+      var oauth = new OAuth.OAuth(
+        fitbit_config.request_token_url,
+        fitbit_config.access_token_url,
+        fitbit_config.consumer_key,
+        fitbit_config.consumer_secret,
+        "1.0",
+        null,
+        "HMAC-SHA1",
+        {
+          "User-Agent": "racker-tracker"
+        }
+      );
+      var date = "2013-07-20";
+      oauth.get(ENDPOINTS.fitbit.base + "user/-/activities/date/"+date+".json",
+        token.token, token.secret, function(error, data, response) {
+          if(error) {
+            message = "error: " + JSON.stringify(error);
+          }
+          else {
+            data = JSON.parse(data);
+            message = JSON.stringify(data);
+            console.log(data.summary);
 
-        if(error) {
-          message = JSON.stringify(error);
+            var userid = 1;
+            Stats.find({ where: {
+              date: date,
+              userid: userid
+            }}).success(function(stat) {
+              console.log("adding data");
+              if(!stat) {
+                stat = Stats.build({
+                  date: date,
+                  userid: userid
+                });
+              }
+              stat.updateAttributes({
+                calories: data.summary.caloriesOut,
+                steps: data.summary.steps
+              });
+//              stat.save();
+            });
+          }
+
+          res.render('register/fitbit', {
+            title: 'Test Fitbit',
+            message: message
+          });
+
         }
-        else {
-          message = JSON.stringify(data);
-        }
-        res.render('register/fitbit', {
-          title: 'Test Fitbit',
-          count: count,
-          message: message
-        });
-      }
-    );
+      );
+
+    });
   });
 
 
   app.get('/users', function(req, res) {
 
-    app.get('sequelize')
-    .query("SELECT * FROM Users").success(function(userRows) {
+    var User = app.get('models').User;
+    User.findAll().success(function(users) {
 
-      console.log(userRows);
+      console.log(users);
 
       res.render('users', {
         title: 'User List',
-        users: userRows
+        users: users
       });
 
     });
