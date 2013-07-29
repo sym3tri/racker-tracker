@@ -1,6 +1,7 @@
 var request = require('request'),
   OAuth = require('oauth'),
-  sys = require('sys');
+  sys = require('sys'),
+  fs = require('fs');
 
 var ENDPOINTS = {
   nike: {
@@ -10,7 +11,8 @@ var ENDPOINTS = {
   fitbit: {
     base: 'https://api.fitbit.com/1/',
     list: '',
-    profile: 'user/-/profile.json'
+    profile: 'user/-/profile.json',
+    subscriber_endpoint: 'http://208.80.64.132:3000/fitbit/subscriber'
   }
 };
 
@@ -77,18 +79,7 @@ var routes = function(app) {
     var message = "none";
     var fitbit_config = app.get('config').fitbit;
 
-    var oauth = new OAuth.OAuth(
-      fitbit_config.request_token_url,
-      fitbit_config.access_token_url,
-      fitbit_config.consumer_key,
-      fitbit_config.consumer_secret,
-      "1.0",
-      null,
-      "HMAC-SHA1",
-      {
-        "User-Agent": "racker-tracker"
-      }
-    );
+    var oauth = fitbit_oauth(fitbit_config);
     if(!req.session.fitbit) {
       req.session.fitbit = {};
     }
@@ -125,7 +116,7 @@ var routes = function(app) {
         req.session.fitbit = {
           token: access_token,
           secret: access_token_secret
-        }
+        };
         var User = app.get('models').User;
         var Token = app.get('models').Token;
         User.find(1).success(function(user) {
@@ -147,36 +138,48 @@ var routes = function(app) {
     }
   });
 
+  function fitbit_oauth(fitbit_config) {
+    if(!fitbit_config) {
+      fitbit_config = app.get('config').fitbit;
+    }
+
+    return new OAuth.OAuth(
+      fitbit_config.request_token_url,
+      fitbit_config.access_token_url,
+      fitbit_config.consumer_key,
+      fitbit_config.consumer_secret,
+      "1.0",
+      null,
+      "HMAC-SHA1",
+      {
+        "User-Agent": "racker-tracker"
+      }
+    );
+  }
+
   app.get('/register/fitbit-profile', function(req, res) {
+    res.render('register/fitbit', {
+      title: 'Test Fitbit',
+      message: "thanks"
+    });
+  });
+
+  function get_activity(token_id, date) {
     var Token = app.get('models').Token;
     var Stats = app.get('models').Stats;
-    var fitbit_config = app.get('config').fitbit;
 
-    Token.find(2).success(function(token) {
+    Token.find(token_id).success(function(token) {
       if(!token) {
-        res.redirect("/register/fitbit");
+        return false;
       }
-      var oauth = new OAuth.OAuth(
-        fitbit_config.request_token_url,
-        fitbit_config.access_token_url,
-        fitbit_config.consumer_key,
-        fitbit_config.consumer_secret,
-        "1.0",
-        null,
-        "HMAC-SHA1",
-        {
-          "User-Agent": "racker-tracker"
-        }
-      );
-      var date = "2013-07-20";
+      var oauth = fitbit_oauth();
       oauth.get(ENDPOINTS.fitbit.base + "user/-/activities/date/"+date+".json",
         token.token, token.secret, function(error, data, response) {
           if(error) {
-            message = "error: " + JSON.stringify(error);
+            return false;
           }
           else {
             data = JSON.parse(data);
-            message = JSON.stringify(data);
             console.log(data.summary);
 
             var userid = 1;
@@ -195,21 +198,66 @@ var routes = function(app) {
                 calories: data.summary.caloriesOut,
                 steps: data.summary.steps
               });
-//              stat.save();
             });
           }
-
-          res.render('register/fitbit', {
-            title: 'Test Fitbit',
-            message: message
-          });
-
+          return true;
         }
       );
 
     });
+  }
+
+  app.get('/fitbit/subscribe', function(req, res) {
+    var token_id = 2;
+
+    var Token = app.get('models').Token;
+
+    Token.find(token_id).success(function(token) {
+      if(!token) {
+        res.redirect("/register/fitbit");
+      }
+      var oauth = fitbit_oauth();
+      oauth.post(ENDPOINTS.fitbit.base+"user/-/activities/apiSubscriptions/"+token_id+".json",
+        token.token, token.secret, '', function(error, data, response) {
+          res.send();
+          if(error) {
+            console.error("error: " + JSON.stringify(error));
+          }
+          else {
+            console.log("data: ", data);
+          }
+        });
+    });
   });
 
+  // This is called by fitbit when there are updates to stats
+  // This in turn calls the fitbit api to get the data
+  app.post('/fitbit/subscriber', function(req, res) {
+    res.send(204);
+    console.log("X-Fitbit-Signature: "+ req.get("X-Fitbit-Signature"));
+    // console.log("files: ",req.files.updates);
+    var update = req.files.updates;
+    console.log("path:", update.path);
+    console.log("content type:", update.mime);
+    fs.readFile(update.path, function(error, data) {
+      if(error) {
+        console.error("unable to read", update.path);
+      }
+      else {
+        data = JSON.parse(data);
+        console.log("data",data);
+        data.forEach(function(day) {
+          console.log("updating:", day.subscriptionId, day.date);
+          get_activity(day.subscriptionId, day.date);
+        });
+      }
+      fs.unlink(update.path, function(error) {
+        if(error) {
+          console.error("unlinking", update.path, "failed");
+        }
+      });
+    });
+  });
 
   app.get('/users', function(req, res) {
 
