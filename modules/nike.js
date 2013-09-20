@@ -1,5 +1,6 @@
 var request = require('request'),
     _ = require('underscore'),
+    Q = require('Q'),
     endpoint = 'https://api.nike.com/me/sport/activities';
 
 function filterFuelBand(activityItem) {
@@ -8,21 +9,22 @@ function filterFuelBand(activityItem) {
 
 function mapMetrics(activityItem) {
   return {
-    id: 'nike-' + activityItem.activityId,
     date: Date.parse(activityItem.startTime),
     steps: activityItem.metricSummary.steps,
     calories: activityItem.metricSummary.calories
   };
 }
 
-function fetch(token, startDate, endDate, error, cb) {
-  var result;
+function fetch(token, startDate, endDate) {
+  var result, deferred;
+
+  deferred = Q.defer();
   request({
     uri: endpoint,
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json'
-      //'appid':
+      'Content-Type': 'application/json',
+      'appid': 'fuelband'
     },
     qs: {
       'access_token': token,
@@ -33,18 +35,47 @@ function fetch(token, startDate, endDate, error, cb) {
   }, function(err, res, body) {
     if (err) {
       console.log(err);
-      if (error) {
-        error(err);
-      }
+      deferred.reject(new Error(err));
+    } else if (res.statusCode !== 200) {
+      deferred.reject(new Error(body));
     } else {
       result = JSON.parse(body).data.filter(filterFuelBand).map(mapMetrics);
-      cb(result);
+      deferred.resolve(result);
     }
   });
+  return deferred.promise;
 }
 
+// XXX: this solution is the old hacky api that uses cookies.
+// wont use this, but will leave code for now since it works.
 function login(username, password) {
-  //{"method":"POST","url":"%base_url%/nsl/v2.0/user/login?format=json&app=%25appid%25&client_id=%25client_id%25&client_secret=%25client_secret%25","headers":{"appid":"%appid%","Accept":"application/json","Content-Type":"application/x-www-form-urlencoded"},"body":"email=ed.rooth%40gmail.com&password=tech12"}
+  var result, deferred, reqBody;
+
+  reqBody = 'app=b31990e7-8583-4251-808f-9dc67b40f5d2&format=json&contentType=plaintext&email=' + 
+    encodeURIComponent(username) + '&password=' + encodeURIComponent(password);
+
+  deferred = Q.defer();
+  request({
+    method: 'POST',
+    followRedirect: true,
+    followAllRedirects: true,
+    uri: 'https://secure-nikeplus.nike.com/nsl/services/user/login?app=b31990e7-8583-4251-808f-9dc67b40f5d2&format=json&contentType=plaintext',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+    },
+    body: reqBody
+  }, function(err, res, body) {
+    if (err) {
+      console.log(err);
+      deferred.reject(new Error(err));
+    } else if (res.statusCode !== 200) {
+      deferred.reject(new Error(body));
+    } else {
+      result = body;
+      deferred.resolve(result);
+    }
+  });
+  return deferred.promise;
 }
 
 module.exports = function nike(app) {
