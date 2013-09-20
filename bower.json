@@ -1,7 +1,21 @@
 {
   "name": "racker-tracker",
   "version": "0.0.0",
+  "homepage": "https://github.com/sym3tri/racker-tracker",
+  "authors": [
+    "Ed Rooth <ed.rooth@rackspace.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
   "dependencies": {
-    "bootstrap": "~2.3.2"
+    "jquery": "~2.0.3",
+    "bootstrap": "~3.0.0"
   }
 }

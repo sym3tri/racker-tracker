@@ -11,6 +11,8 @@ app.set('config', config);
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'hjs');
+app.set('layout', 'layout');
+app.engine('hjs', require('hogan-express'));
 app.set('models', require('./models')(app).models);
 //app.set('sequelize', require('./models')(app).sequelize);
 app.use(express.favicon());
