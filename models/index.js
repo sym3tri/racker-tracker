@@ -23,8 +23,7 @@ module.exports = function(app) {
   // Import all models.
   models = {
     User: sequelize.import(__dirname + '/user'),
-    Stats: sequelize.import(__dirname + '/stats'),
-    Token: sequelize.import(__dirname + '/tokens')
+    Stats: sequelize.import(__dirname + '/stats')
   };
 
   // Sync all models/tables.
