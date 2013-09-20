@@ -1,12 +1,17 @@
-var request = require('request');
+var request = require('request'),
+  sys = require('sys'),
+  fs = require('fs');
+
 var ENDPOINTS = {
   nike: {
     base: 'https://api.nike.com/',
     list: 'me/sport/activities/'
   },
   fitbit: {
-    base: '',
-    list: ''
+    base: 'https://api.fitbit.com/1/',
+    list: '',
+    profile: 'user/-/profile.json',
+    subscriber_endpoint: 'http://208.80.64.132:3000/fitbit/subscriber'
   }
 };
 
@@ -65,18 +70,16 @@ var routes = function(app) {
     res.render('register', { title: 'Register' });
   });
 
-
-
   app.get('/users', function(req, res) {
 
-    app.get('sequelize')
-    .query("SELECT * FROM Users").success(function(userRows) {
+    var User = app.get('models').User;
+    User.findAll().success(function(users) {
 
-      console.log(userRows);
+      console.log(users);
 
       res.render('users', {
         title: 'User List',
-        users: userRows
+        users: users
       });
 
     });

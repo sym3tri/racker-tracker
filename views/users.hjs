@@ -1,5 +1,5 @@
 <h1>list of users</h1>
 
-{{#each users}}
+{{#users}}
   <div>{{firstname}} - {{lastname}}</div>
-{{/each}}
+{{/users}}

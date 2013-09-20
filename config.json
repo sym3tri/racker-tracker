@@ -2,5 +2,12 @@
   "dbname": "tracker",
   "dbhost": "127.0.0.1",
   "dbusername": "root",
-  "dbpassword": ""
+  "dbpassword": "",
+  "fitbit": {
+  	"consumer_key": "",
+  	"consumer_secret": "",
+  	"request_token_url": "https://api.fitbit.com/oauth/request_token",
+  	"access_token_url": "https://api.fitbit.com/oauth/access_token",
+  	"authorize_url": "https://www.fitbit.com/oauth/authorize"
+  }
 }

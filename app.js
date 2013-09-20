@@ -12,7 +12,7 @@ app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'hjs');
 app.set('models', require('./models')(app).models);
-app.set('sequelize', require('./models')(app).sequelize);
+//app.set('sequelize', require('./models')(app).sequelize);
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
@@ -28,6 +28,8 @@ if ('development' === app.get('env')) {
 }
 
 routes = require('./routes')(app);
+
+require('./modules')(app);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
