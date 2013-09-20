@@ -47,7 +47,9 @@ function login(username, password) {
   //{"method":"POST","url":"%base_url%/nsl/v2.0/user/login?format=json&app=%25appid%25&client_id=%25client_id%25&client_secret=%25client_secret%25","headers":{"appid":"%appid%","Accept":"application/json","Content-Type":"application/x-www-form-urlencoded"},"body":"email=ed.rooth%40gmail.com&password=tech12"}
 }
 
-module.exports = {
-  fetch: fetch,
-  login: login
-};
+module.exports = function nike(app) {
+  return {
+    fetch: fetch,
+    login: login
+  };
+}
