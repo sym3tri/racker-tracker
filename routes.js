@@ -70,6 +70,10 @@ var routes = function(app) {
     res.render('register', { title: 'Register' });
   });
 
+  app.get('/about', function(req, res){
+    res.render('about', { title: 'About' });
+  });
+
   app.get('/users', function(req, res) {
 
     var User = app.get('models').User;
