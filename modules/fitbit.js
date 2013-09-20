@@ -1,5 +1,7 @@
 var OAuth = require('oauth'),
-  fs = require('fs');
+  fs = require('fs'),
+  Q = require('Q'),
+  datejs = require('datejs');
 
 function fitbit(app) {
 	var ENDPOINTS = {
@@ -88,7 +90,12 @@ function fitbit(app) {
       "1.0",
       null,
       "HMAC-SHA1",
+      32,
       {
+        "Accept": "*/*",
+        "Accept-Language": "en_US",
+        "Accept-Locale": "en_US",
+        "Connection": "close",
         "User-Agent": "racker-tracker"
       }
     );
@@ -101,6 +108,8 @@ function fitbit(app) {
     });
   });
 
+  // date format: yyyy-MM-dd
+  /*
   function get_activity(token_id, date) {
     var Token = app.get('models').Token;
     var Stats = app.get('models').Stats;
@@ -119,7 +128,7 @@ function fitbit(app) {
             data = JSON.parse(data);
             console.log(data.summary);
 
-            var userid = 1;
+            var userid = token.userid;
             Stats.find({ where: {
               date: date,
               userid: userid
@@ -143,9 +152,55 @@ function fitbit(app) {
 
     });
   }
+  */
+
+  function get_activity(oauth, token, date) {
+    var deferred = Q.defer();
+    oauth.get(ENDPOINTS.base + "user/-/activities/date/"+date+".json",
+      token.token, token.secret, function(error, data, response) {
+        if(error) {
+          deferred.reject(new Error(error));
+          return;
+        }
+        var activity = JSON.parse(data);
+        activity.date = date;
+        deferred.resolve(activity);
+      });
+     return deferred.promise;
+  }
+
+  function get_activities(userid, start_date, end_date) {
+    var Token = app.get('models').Token,
+      date_format = "yyyy-MM-dd",
+      oauth = fitbit_oauth();
+
+    Token.find({
+      'userid': userid,
+      'service': 'fitbit'
+    }).success(function(token) {
+      var requests = [];
+      var date = start_date;
+      if(undefined === end_date) {
+        requests.push(get_activity(oauth, token, date.toString(date_format)));
+      }
+      else {
+        while(date.getTime() <= end_date.getTime()) {
+          requests.push(get_activity(oauth, token, date.toString(date_format)));
+          date.addDays(1);
+        }
+      }
+
+      Q.spread(requests, function() {
+        console.log('done:',arguments);
+      },function() {
+        console.log('failed');
+      })
+
+    });
+  }
 
   app.get('/fitbit/subscribe', function(req, res) {
-    var token_id = 2;
+    var token_id = 1;
 
     var Token = app.get('models').Token;
 
@@ -166,6 +221,27 @@ function fitbit(app) {
         });
     });
   });
+
+  app.get('/fitbit/backfill', function(req, res) {
+    var userid = 1;
+
+    get_activities(userid, Date.today().addDays(-7), Date.today());
+    res.send('test');
+/*
+    var Token = app.get('models').Token;
+    Token.find({
+      'userid': userid,
+      'service': 'fitbit'
+    }).success(function(token) {
+      if(!token) {
+        res.redirect('/register/fitbit');
+      }
+      res.send(token);
+      get_activity(token.id, '2013-09-20');
+    });
+*/
+  });
+
 
   // This is called by fitbit when there are updates to stats
   // This in turn calls the fitbit api to get the data
