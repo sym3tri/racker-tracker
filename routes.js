@@ -27,7 +27,7 @@ var routes = function(app) {
     res.render('index', { title: 'Racker Tracker' });
   });
 
-  app.post('/register', function(req, res) {
+  app.post('/register-nike', function(req, res) {
     console.log(req.body);
 
     var User = app.get('models').User;
@@ -36,7 +36,7 @@ var routes = function(app) {
       email: req.body.email,
       firstname: req.body.firstname,
       lastname: req.body.lastname,
-      service: req.body.service,
+      service: 'nike',
       token: req.body.token
     };
 
@@ -68,6 +68,10 @@ var routes = function(app) {
 
   app.get('/register', function(req, res){
     res.render('register', { title: 'Register' });
+  });
+
+  app.get('/register/nike', function(req, res){
+    res.render('register/nike', { title: 'Register' });
   });
 
   app.get('/about', function(req, res){

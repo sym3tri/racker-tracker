@@ -1,23 +1,4 @@
-<form method="POST" action="/register">
-  <div>
-    <select name="service">
-      <option value="nike">Nike</option>
-      <option value="fitbit">FitBit</option>
-    </select>
-  </div>
-  <div>
-    Email: <input type="text" name="email"/>
-  </div>
-  <div>
-    First Name: <input type="text" name="firstname"/>
-  </div>
-  <div>
-    Last Name: <input type="text" name="lastname"/>
-  </div>
-  <div>
-    Auth Token: <input type="text" name="token"/>
-    (<a href="https://developer.nike.com/console">generate here</a>)
-    <a href="/register/fitbit">Fitbit</a>
-  </div>
-  <input type="submit" value="Register"/>
-</form>
+<h3>choose your device</h3>
+
+<a href="/register/nike"><img src="/images/fuelband.png"/></a>
+<a href="/register/fitbit"><img src="/images/fitbit.png"/></a>
