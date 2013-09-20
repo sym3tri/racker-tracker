@@ -16,7 +16,8 @@ module.exports = function(sequelize, DataTypes) {
         notEmpty: true
       },
       service: DataTypes.ENUM('nike', 'fitbit'),
-      token: DataTypes.STRING
+      token: DataTypes.STRING,
+      secret: DataTypes.STRING
     }, {
       instanceMethods: {
         getFullname: function() {
@@ -26,4 +27,4 @@ module.exports = function(sequelize, DataTypes) {
     });
 
   return User;
-}
+};
