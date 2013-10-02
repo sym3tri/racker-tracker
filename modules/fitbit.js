@@ -3,79 +3,95 @@ var OAuth = require('oauth'),
   Q = require('Q'),
   datejs = require('datejs');
 
-module.exports = function fitbit(app) {
+module.exports = function(config) {
 	var ENDPOINTS = {
 		base: 'https://api.fitbit.com/1/',
     profile: 'user/-/profile.json'
 	};
 
-  app.get('/register/fitbit', function(req, res) {
-    var message = "none";
-    var fitbit_config = app.get('config').fitbit;
+  function webhandler(app) {
+    app.get('/register/fitbit', function(req, res) {
+      var message = "none";
+      var fitbit_config = config.fitbit;
 
-    var oauth = fitbit_oauth(fitbit_config);
-    if(!req.session.fitbit) {
-      req.session.fitbit = {};
-    }
+      var oauth = fitbit_oauth(fitbit_config);
+      if(!req.session.fitbit) {
+        req.session.fitbit = {};
+      }
 
-    if(!req.session.fitbit.token && !req.session.fitbit.secret) {
-      oauth.getOAuthRequestToken(function(error, oauth_token, oauth_token_secret, results) {
+      if(!req.session.fitbit.token && !req.session.fitbit.secret) {
+        oauth.getOAuthRequestToken(function(error, oauth_token, oauth_token_secret, results) {
+          if(error) {
+            console.error("error in OAuthRequestToken: ", JSON.stringify(error));
+          }
+          else {
+            req.session.fitbit = {
+              secret: oauth_token_secret
+            };
+            res.redirect(fitbit_config.authorize_url + "?oauth_token=" + oauth_token);
+          }
+        });
+        return;
+      }
+      else if(!req.session.fitbit.token && req.session.fitbit.secret) {
+        console.log("oauth_token: "+req.query.oauth_token);
+        oauth.getOAuthAccessToken(req.query.oauth_token, req.session.fitbit.secret, req.query.oauth_verifier, accessTokenCallback);
+        return;
+      }
+      res.render('register/fitbit', {
+        title: 'Test Fitbit',
+        message: message
+      });
+
+      function accessTokenCallback(error, access_token, access_token_secret, results) {
         if(error) {
-          console.error("error in OAuthRequestToken: ", JSON.stringify(error));
+          message = "error in accessTokenCallback" + JSON.stringify(error);
         }
         else {
           req.session.fitbit = {
-            secret: oauth_token_secret
+            token: access_token,
+            secret: access_token_secret
           };
-          res.redirect(fitbit_config.authorize_url + "?oauth_token=" + oauth_token);
+          var User = app.get('models').User;
+
+          var user = User.build({
+            'token': access_token,
+            'secret': access_token_secret,
+            'service': 'fitbit'
+          });
+
+          oauth.get(ENDPOINTS.base + ENDPOINTS.profile,
+            user.token, user.secret, function(error, data, response) {
+            var profile = JSON.parse(data);
+
+            user.lastname = profile.user.fullName;
+            user.email = '';
+            user.firstname = '';
+            user.save();
+            res.redirect('/');
+          });
         }
-      });
-      return;
-    }
-    else if(!req.session.fitbit.token && req.session.fitbit.secret) {
-      console.log("oauth_token: "+req.query.oauth_token);
-      oauth.getOAuthAccessToken(req.query.oauth_token, req.session.fitbit.secret, req.query.oauth_verifier, accessTokenCallback);
-      return;
-    }
-    res.render('register/fitbit', {
-      title: 'Test Fitbit',
-      message: message
+      }
     });
 
-    function accessTokenCallback(error, access_token, access_token_secret, results) {
-      if(error) {
-        message = "error in accessTokenCallback" + JSON.stringify(error);
-      }
-      else {
-        req.session.fitbit = {
-          token: access_token,
-          secret: access_token_secret
-        };
-        var User = app.get('models').User;
+    /* for testing the fetch function */
+    app.get('/fitbit/fetch', function(req, res) {
+      var User = app.get('models').User;
 
-        var user = User.build({
-          'token': access_token,
-          'secret': access_token_secret,
-          'service': 'fitbit'
+      User.find(2).success(function(user) {
+        fetch(user, Date.today().addDays(-7), Date.today())
+        .then(function(data) {
+          res.send(data);
+        }, function() {
+          res.send('error');
         });
-
-        oauth.get(ENDPOINTS.base + ENDPOINTS.profile,
-          user.token, user.secret, function(error, data, response) {
-          var profile = JSON.parse(data);
-
-          user.lastname = profile.user.fullName;
-          user.email = '';
-          user.firstname = '';
-          user.save();
-          res.redirect('/');
-        });
-      }
-    }
-  });
+      });
+    });
+  }
 
   function fitbit_oauth(fitbit_config) {
     if(!fitbit_config) {
-      fitbit_config = app.get('config').fitbit;
+      fitbit_config = config.fitbit;
     }
 
     return new OAuth.OAuth(
@@ -99,7 +115,9 @@ module.exports = function fitbit(app) {
 
   function get_activity(oauth, user, date) {
     var deferred = Q.defer();
-    oauth.get(ENDPOINTS.base + "user/-/activities/date/"+date+".json",
+    oauth.get(ENDPOINTS.base + "user/-/activities/date/" +
+      date.toString('yyyy-MM-dd') +
+      ".json",
       user.token, user.secret, function(error, data, response) {
         if(error) {
           deferred.reject(new Error(error));
@@ -120,13 +138,16 @@ module.exports = function fitbit(app) {
       date = start_date;
 
     while(date.getTime() <= end_date.getTime()) {
-      requests.push(get_activity(oauth, user, date.toString(date_format)));
+      requests.push(get_activity(oauth, user, date.clone()));
       date.addDays(1);
     }
 
     Q.spread(requests, function() {
       var days = Array.prototype.slice.call(arguments);
-      var stats = days.map(function(day) {
+      var stats = days.filter(function(day) {
+        var summary = day.summary;
+        return summary.steps !== 0 && summary.calories !== 0;
+      }).map(function(day) {
         var summary = day.summary;
         return {
           'date': day.date,
@@ -142,22 +163,10 @@ module.exports = function fitbit(app) {
     return deferred.promise;
   }
 
-  /* for testing the fetch function */
-  app.get('/fitbit/fetch', function(req, res) {
-    var User = app.get('models').User;
-
-    User.find(2).success(function(user) {
-      fetch(user, Date.today().addDays(-7), Date.today())
-      .then(function(data) {
-        res.send(data);
-      }, function() {
-        res.send('error');
-      });
-    });
-  });
 
   return {
-    fetch: fetch
+    fetch: fetch,
+    webhandler: webhandler
   };
 };
 

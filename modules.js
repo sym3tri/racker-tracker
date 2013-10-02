@@ -1,18 +1,29 @@
-var fs = require("fs");
+var fs = require("fs"),
+  Q = require('Q');
 
-function modules(app) {
+function modules(config, app) {
+  var deferred = Q.defer(),
+    directory = "./modules/",
+    modules = {};
+
   console.log("loading modules");
-  var directory = "./modules/";
   fs.readdir(directory, function(err, files) {
     if(err) {
-      console.error("Skipping modiles:", err);
+      console.error("Skipping modules:", err);
+      deferred.reject('error loading modules');
       return;
     }
     files.forEach(function(file) {
-      console.log("loading module:", file);
-      require(directory + file)(app);
+      var module = require(directory + file)(config);
+      modules[file.replace(/\.js$/, '')] = module;
+      if(app && 'webhandler' in module) {
+        console.log("loading module:", file);
+        module.webhandler(app);
+      }
     });
+    deferred.resolve(modules);
   });
+  return deferred.promise;
 }
 
 module.exports = modules;

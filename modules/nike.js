@@ -78,7 +78,7 @@ function login(username, password) {
   return deferred.promise;
 }
 
-module.exports = function nike(app) {
+module.exports = function nike(config) {
   return {
     fetch: fetch,
     login: login
