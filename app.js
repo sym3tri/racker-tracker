@@ -13,7 +13,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'hjs');
 app.set('layout', 'layout');
 app.engine('hjs', require('hogan-express'));
-app.set('models', require('./models')(app).models);
+app.set('models', require('./models')(config).models);
 //app.set('sequelize', require('./models')(app).sequelize);
 app.use(express.favicon());
 app.use(express.logger('dev'));
@@ -31,7 +31,7 @@ if ('development' === app.get('env')) {
 
 routes = require('./routes')(app);
 
-require('./modules')(app);
+require('./modules')(config, app);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

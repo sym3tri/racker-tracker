@@ -1,10 +1,7 @@
 var Sequelize = require('sequelize');
 
-module.exports = function(app) {
-  var config, sequelize, models;
-
-  // Get config options from the app.
-  config = app.get('config');
+module.exports = function(config) {
+  var sequelize, models;
 
   // Instance of the ORM database driver.
   sequelize = new Sequelize(
