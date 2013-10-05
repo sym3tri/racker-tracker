@@ -1,4 +1,5 @@
 var request = require('request'),
+    util = require('../util'),
     _ = require('underscore'),
     Q = require('Q'),
     endpoint = 'https://api.nike.com/me/sport/activities';
@@ -15,7 +16,14 @@ function mapMetrics(activityItem) {
   };
 }
 
-function fetch(token, startDate, endDate) {
+function parseDate(date) {
+  var d = Date.parse(date);
+  return d.getFullYear() + '-' +
+    util.pad(d.getMonth()) + '-' +
+    util.pad(d.getDay());
+}
+
+function fetch(user, startDate, endDate) {
   var result, deferred;
 
   deferred = Q.defer();
@@ -27,10 +35,10 @@ function fetch(token, startDate, endDate) {
       'appid': 'fuelband'
     },
     qs: {
-      'access_token': token,
+      'access_token': user.token,
       'count': 100,
-      'startDate': startDate,
-      'endDate': endDate,
+      'startDate': parseDate(startDate),
+      'endDate': parseDate(endDate),
     }
   }, function(err, res, body) {
     if (err) {
