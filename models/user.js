@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define('User', {
       email: {
@@ -6,24 +8,14 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: false,
         isEmail: true
       },
-      firstname: {
+      name: {
         type: DataTypes.STRING,
         allowNull: false,
-        notEmpty: true
-      },
-      lastname: {
-        type: DataTypes.STRING, allowNull: false,
         notEmpty: true
       },
       service: DataTypes.ENUM('nike', 'fitbit'),
       token: DataTypes.STRING,
       secret: DataTypes.STRING
-    }, {
-      instanceMethods: {
-        getFullname: function() {
-          return this.firstname + ' ' + this.lastname;
-        }
-      }
     });
 
   return User;

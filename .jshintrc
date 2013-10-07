@@ -1,0 +1,26 @@
+{
+  "curly": true,
+  "eqeqeq": true,
+  "immed": true,
+  "latedef": true,
+  "newcap": true,
+  "noarg": true,
+  "sub": true,
+  "undef": true,
+  "boss": true,
+  "eqnull": true,
+  "strict": true,
+  "es5": true,
+  "trailing": true,
+  "maxlen": 80,
+  "browser": true,
+  "node": true,
+  "nonew": true,
+  "quotmark": "single",
+  "unused": true,
+  "maxdepth": 3,
+  "maxcomplexity": 10,
+  "onevar": true,
+  "globals": {
+  }
+}

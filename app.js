@@ -8,7 +8,7 @@ var express = require('express'),
 
 // all environments
 app.set('config', config);
-app.set('port', process.env.PORT || 3001);
+app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'hjs');
 app.set('layout', 'layout');
