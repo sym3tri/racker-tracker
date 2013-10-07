@@ -1,11 +1,58 @@
+'use strict';
+
 var request = require('request'),
     util = require('../util'),
-    _ = require('underscore'),
     Q = require('Q'),
     endpoint = 'https://api.nike.com/me/sport/activities';
 
+function webhandler(app) {
+  app.get('/register/nike', function(req, res){
+    res.render('register/nike', { title: 'Register' });
+  });
+
+  app.post('/register-nike', function(req, res) {
+    console.log(req.body);
+
+    var User = app.get('models').User;
+
+    var userValues = {
+      email: req.body.email,
+      name: req.body.name,
+      service: 'nike',
+      token: req.body.token
+    };
+
+    User.find({ where: { email: req.body.email } })
+      .success(function(user) {
+        if (user) {
+          user.updateAttributes(userValues);
+        } else {
+          user = User.build(userValues);
+        }
+
+        user.save()
+          .error(function(e) {
+            console.log('DB ERROR!!!');
+            console.log(e);
+            res.send('ERROR: ' + e.code);
+          })
+          .success(function() {
+            console.log('SAVE OK!!!');
+            res.send('it worked! thanks ' + user.getFullname());
+          });
+
+      });
+
+    // retrieve token
+
+    // save token in DB
+  });
+
+
+}
+
 function filterFuelBand(activityItem) {
-  return activityItem.deviceType === "FUELBAND";
+  return activityItem.deviceType === 'FUELBAND';
 }
 
 function mapMetrics(activityItem) {
@@ -88,7 +135,8 @@ function login(username, password) {
 
 module.exports = function nike(config) {
   return {
+    webhandler: webhandler,
     fetch: fetch,
     login: login
   };
-}
+};
