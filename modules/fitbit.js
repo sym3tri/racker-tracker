@@ -12,7 +12,7 @@ module.exports = function(config) {
 	};
 
   function webhandler(app) {
-    var User = app.get('models').User;
+    var User = app.get('db').models.User;
 
     app.get('/register/fitbit', function(req, res) {
       var message = 'none',

@@ -13,7 +13,7 @@ function webhandler(app) {
   app.post('/register-nike', function(req, res) {
     console.log(req.body);
 
-    var User = app.get('models').User;
+    var User = app.get('db').models.User;
 
     var userValues = {
       email: req.body.email,
@@ -38,7 +38,7 @@ function webhandler(app) {
           })
           .success(function() {
             console.log('SAVE OK!!!');
-            res.send('it worked! thanks ' + user.getFullname());
+            res.send('it worked! thanks ' + user.name);
           });
 
       });
