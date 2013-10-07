@@ -23,6 +23,9 @@ module.exports = function(config) {
     Stats: sequelize.import(__dirname + '/stats')
   };
 
+  //models.Stats.belongsTo(models.User);
+  //models.User.hasMany(models.Stats);
+
   // Sync all models/tables.
   sequelize.sync()
     .error(function(e) {

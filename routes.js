@@ -1,6 +1,7 @@
 var request = require('request'),
   sys = require('sys'),
-  fs = require('fs');
+  fs = require('fs'),
+  util = require('./util');
 
 var ENDPOINTS = {
   nike: {
@@ -30,7 +31,7 @@ var routes = function(app) {
   app.post('/register-nike', function(req, res) {
     console.log(req.body);
 
-    var User = app.get('models').User;
+    var User = app.get('db').models.User;
 
     var userValues = {
       email: req.body.email,
@@ -79,17 +80,22 @@ var routes = function(app) {
   });
 
   app.get('/users', function(req, res) {
+    var since = req.query.since || '0',
+      query =
+      'SELECT Users.*, sum(Stats.calories) AS calories, sum(Stats.steps) AS steps ' +
+      'FROM Users LEFT JOIN ( ' +
+        'SELECT * FROM Stats ' +
+        'WHERE Stats.date > "' + util.parseDate(since) + '" ' +
+      ') Stats ' +
+      'ON Users.id = Stats.userid ' +
+      'GROUP BY Users.id';
 
-    var User = app.get('models').User;
-    User.findAll().success(function(users) {
-
-      console.log(users);
-
+    app.get('db').sequelize.query(query)
+    .success(function(users) {
       res.render('users', {
         title: 'User List',
         users: users
       });
-
     });
 
   });

@@ -1,5 +1,24 @@
 <h1>list of users</h1>
 
-{{#users}}
-  <div>{{firstname}} - {{lastname}}</div>
-{{/users}}
+<table class="table table-condensed table-hover">
+  <thead>
+    <tr>
+      <td>Name</td>
+      <td>Registered Date</td>
+      <td>Steps</td>
+      <td>Calories</td>
+    </tr>
+  </thead>
+
+  <tbody>
+    {{#users}}
+    <tr>
+      <td>{{firstname}} {{lastname}}</td>
+      <td>{{createdAt}}</td>
+      <td>{{steps}}</td>
+      <td>{{calories}}</td>
+    </tr>
+    {{/users}}
+  </tbody>
+
+</table>
