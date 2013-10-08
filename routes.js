@@ -1,28 +1,14 @@
-var request = require('request'),
-  sys = require('sys'),
-  fs = require('fs'),
+'use strict';
+
+var humanize = require('humanize'),
   util = require('./util');
 
-var ENDPOINTS = {
-  nike: {
-    base: 'https://api.nike.com/',
-    list: 'me/sport/activities/'
-  },
-  fitbit: {
-    base: 'https://api.fitbit.com/1/',
-    list: '',
-    profile: 'user/-/profile.json',
-    subscriber_endpoint: 'http://208.80.64.132:3000/fitbit/subscriber'
-  }
-};
-
-
-/*
- * GET home page.
- */
 
 var routes = function(app) {
 
+  /*
+   * GET home page.
+   */
   app.get('/', function(req, res) {
     res.render('index', { title: 'Racker Tracker' });
   });
@@ -48,6 +34,21 @@ var routes = function(app) {
 
     app.get('db').sequelize.query(query)
     .success(function(users) {
+      users.forEach(function(user, i) {
+        if(null !== user.steps) {
+          users[i].steps = humanize.numberFormat(user.steps, 0);
+        }
+        else {
+          users[i].steps = 0;
+        }
+
+        if(null !== user.calories) {
+          users[i].calories = humanize.numberFormat(user.calories, 0);
+        }
+        else {
+          users[i].calories = 0;
+        }
+      });
       res.render('users', {
         title: 'User List',
         users: users

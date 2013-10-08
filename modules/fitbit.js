@@ -90,6 +90,7 @@ module.exports = function(config) {
 
       userValues.name = req.body.name;
       userValues.email = req.body.email;
+      userValues.active = true;
 
       User.find({ where: { email: userValues.email } })
       .success(function(user) {
@@ -153,11 +154,15 @@ module.exports = function(config) {
   function get_activity(oauth, user, date) {
     var deferred = Q.defer();
     oauth.get(ENDPOINTS.base + 'user/-/activities/date/' +
-      date.toString('yyyy-MM-dd') +
-      '.json',
+      date.toString('yyyy-MM-dd') + '.json',
       user.token, user.secret, function(error, data) {
         if(error) {
-          deferred.reject(new Error(error));
+          if(401 === error.statusCode) {
+            deferred.reject(new Error('unauthorized'));
+          }
+          else {
+            deferred.reject(new Error(JSON.stringify(error)));
+          }
           return;
         }
         var activity = JSON.parse(data);
@@ -169,7 +174,6 @@ module.exports = function(config) {
 
   function fetch(user, start_date, end_date) {
     var deferred = Q.defer(),
-      date_format = 'yyyy-MM-dd',
       oauth = fitbit_oauth(),
       requests = [],
       date = start_date;
@@ -189,12 +193,12 @@ module.exports = function(config) {
         return {
           'date': day.date,
           'steps': summary.steps,
-          'calories': summary.marginalCalories
+          'calories': summary.caloriesOut
         };
       });
       deferred.resolve(stats);
-    },function() {
-      deferred.reject('failed to get data from fitbit');
+    }, function(err) {
+      deferred.reject(err);
     });
 
     return deferred.promise;

@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs'),
     util = require('./util'),
     config = JSON.parse(fs.readFileSync('./config.json', 'utf8')),
@@ -22,7 +24,11 @@ require('./modules')(config)
       default_start_date = Date.today().addDays(-30),
       end_date = Date.today();
 
-  User.findAll().success(function(users) {
+  User.findAll({
+    where: {
+      active: true
+    }
+  }).success(function(users) {
     if(!users) {
       return;
     }
@@ -39,7 +45,7 @@ require('./modules')(config)
         if(latest_stat) {
           start_date = latest_stat.date;
         } else {
-          start_date = default_start_date;
+          start_date = default_start_date.clone();
         }
 
         console.log('calling fetch: start:',
@@ -47,8 +53,7 @@ require('./modules')(config)
 
         modules[user.service].fetch(user, start_date, end_date)
         .then(function(days) {
-          console.log('days');
-          console.log(days);
+          console.log('days', days);
           days.forEach(function(day) {
             Stats.find({
               'where': {
@@ -68,9 +73,16 @@ require('./modules')(config)
               stat.save();
             });
           });
-        })
-        .catch(function(e) {
-          console.error('error caught:', e, e.lineNumber);
+        }, function(error) {
+          if(error.message === 'unauthorized') {
+            console.error('unauthorized user', user.id, user.email,
+              ' marking as inactive');
+            user.active = false;
+            user.save();
+          }
+          else {
+            console.log('unkown error (', user.id, user.email, ')', error);
+          }
         });
       });
     });
