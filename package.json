@@ -16,6 +16,7 @@
     "q": "~0.9.6",
     "underscore": "~1.5.2",
     "hogan-express": "~0.4.1",
-    "datejs": "0.0.2"
+    "datejs": "0.0.2",
+    "humanize": "0.0.9"
   }
 }

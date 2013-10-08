@@ -19,7 +19,8 @@ function webhandler(app) {
       email: req.body.email,
       name: req.body.name,
       service: 'nike',
-      token: req.body.token
+      token: req.body.token,
+      active: true
     };
 
     User.find({ where: { email: req.body.email } })
@@ -92,6 +93,11 @@ function fetch(user, startDate, endDate) {
       console.log(err);
       deferred.reject(new Error(err));
     } else if (res.statusCode !== 200) {
+      err = JSON.parse(body);
+      if('invalid_token' === err.error) {
+        deferred.reject(new Error('unauthorized'));
+        return;
+      }
       deferred.reject(new Error(body));
     } else {
       result = JSON.parse(body).data.filter(filterFuelBand).map(mapMetrics);
