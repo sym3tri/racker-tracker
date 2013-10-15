@@ -18,7 +18,7 @@ if (fs.existsSync(path.join(__dirname, 'config.local.json'))) {
 // all environments
 app.set('config', config);
 app.set('port', config.port || 3000);
-app.set('views', __dirname + '/views');
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hjs');
 app.set('layout', 'layout');
 app.engine('hjs', require('hogan-express'));

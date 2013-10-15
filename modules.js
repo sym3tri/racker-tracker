@@ -1,9 +1,10 @@
 var fs = require("fs"),
+  path = require('path'),
   Q = require('q');
 
-function modules(config, app) {
+function moduleLoader(config, app) {
   var deferred = Q.defer(),
-    directory = "./modules/",
+    directory = path.join(__dirname, "modules"),
     modules = {};
 
   console.log("loading modules");
@@ -26,4 +27,4 @@ function modules(config, app) {
   return deferred.promise;
 }
 
-module.exports = modules;
+module.exports = moduleLoader;
