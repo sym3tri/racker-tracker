@@ -1,5 +1,5 @@
 var fs = require("fs"),
-  Q = require('Q');
+  Q = require('q');
 
 function modules(config, app) {
   var deferred = Q.defer(),

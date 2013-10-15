@@ -1,15 +1,15 @@
 'use strict';
 
 var OAuth = require('oauth'),
-  Q = require('Q');
+  Q = require('q');
 
 require('datejs');
 
 module.exports = function(config) {
-	var ENDPOINTS = {
-		base: 'https://api.fitbit.com/1/',
+  var ENDPOINTS = {
+    base: 'https://api.fitbit.com/1/',
     profile: 'user/-/profile.json'
-	};
+  };
 
   function webhandler(app) {
     var User = app.get('db').models.User;

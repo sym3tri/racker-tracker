@@ -2,7 +2,7 @@
 
 var request = require('request'),
     util = require('../util'),
-    Q = require('Q'),
+    Q = require('q'),
     endpoint = 'https://api.nike.com/me/sport/activities';
 
 function webhandler(app) {
