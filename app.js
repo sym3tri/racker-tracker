@@ -4,12 +4,13 @@ var express = require('express'),
   fs = require('fs'),
   _ = require('underscore'),
   app = module.exports = express(),
-  config = JSON.parse(fs.readFileSync('./config.json', 'utf8')),
+  config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8')),
   localConfig,
   routes;
 
-if (fs.existsSync('./config.local.json')) {
-  localConfig = JSON.parse(fs.readFileSync('./config.local.json', 'utf8'));
+if (fs.existsSync(path.join(__dirname, 'config.local.json'))) {
+  localConfig =
+    JSON.parse(fs.readFileSync(path.join(__dirname, 'config.local.json'), 'utf8'));
   _.extend(config, localConfig);
   console.log('using local config overrides');
 }
