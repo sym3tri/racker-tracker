@@ -2,13 +2,21 @@ var express = require('express'),
   http = require('http'),
   path = require('path'),
   fs = require('fs'),
-  config = JSON.parse(fs.readFileSync('./config.json', 'utf8')),
+  _ = require('underscore'),
   app = module.exports = express(),
+  config = JSON.parse(fs.readFileSync('./config.json', 'utf8')),
+  localConfig,
   routes;
+
+if (fs.existsSync('./config.local.json')) {
+  localConfig = JSON.parse(fs.readFileSync('./config.local.json', 'utf8'));
+  _.extend(config, localConfig);
+  console.log('using local config overrides');
+}
 
 // all environments
 app.set('config', config);
-app.set('port', process.env.PORT || 3000);
+app.set('port', config.port || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'hjs');
 app.set('layout', 'layout');
