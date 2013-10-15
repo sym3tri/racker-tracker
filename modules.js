@@ -4,7 +4,7 @@ var fs = require("fs"),
 
 function moduleLoader(config, app) {
   var deferred = Q.defer(),
-    directory = path.join(__dirname, "modules"),
+    directory = path.join(__dirname, "modules/"),
     modules = {};
 
   console.log("loading modules");
