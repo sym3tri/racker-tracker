@@ -67,8 +67,8 @@ function mapMetrics(activityItem) {
 function parseDate(date) {
   var d = Date.parse(date);
   return d.getFullYear() + '-' +
-    util.pad(d.getMonth()) + '-' +
-    util.pad(d.getDay());
+    util.pad(d.getMonth() + 1) + '-' +
+    util.pad(d.getDate());
 }
 
 function fetch(user, startDate, endDate) {
