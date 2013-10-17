@@ -1,19 +1,9 @@
 var express = require('express'),
   http = require('http'),
   path = require('path'),
-  fs = require('fs'),
-  _ = require('underscore'),
   app = module.exports = express(),
-  config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8')),
-  localConfig,
+  config = require('./config-loader'),
   routes;
-
-if (fs.existsSync(path.join(__dirname, 'config.local.json'))) {
-  localConfig =
-    JSON.parse(fs.readFileSync(path.join(__dirname, 'config.local.json'), 'utf8'));
-  _.extend(config, localConfig);
-  console.log('using local config overrides');
-}
 
 // all environments
 app.set('config', config);

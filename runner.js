@@ -2,7 +2,7 @@
 
 var fs = require('fs'),
     util = require('./util'),
-    config = JSON.parse(fs.readFileSync('./config.json', 'utf8')),
+    config = require('./config-loader'),
     models = require('./models')(config).models;
 
 require('datejs');
