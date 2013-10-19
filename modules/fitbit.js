@@ -186,16 +186,16 @@ module.exports = function(config) {
     Q.spread(requests, function() {
       var days = Array.prototype.slice.call(arguments),
         stats = days.filter(function(day) {
-        var summary = day.summary;
-        return summary.steps !== 0 && summary.calories !== 0;
-      }).map(function(day) {
-        var summary = day.summary;
-        return {
-          'date': day.date,
-          'steps': summary.steps,
-          'calories': summary.caloriesOut
-        };
-      });
+          var summary = day.summary;
+          return summary.steps !== 0 && summary.calories !== 0;
+        }).map(function(day) {
+          var summary = day.summary;
+          return {
+            'date': day.date,
+            'steps': summary.steps,
+            'calories': summary.caloriesOut
+          };
+        });
       deferred.resolve(stats);
     }, function(err) {
       deferred.reject(err);

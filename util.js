@@ -1,4 +1,8 @@
-var datejs = require('datejs');
+'use strict';
+
+var datejs = require('datejs'),
+  request = require('request'),
+  Q = require('q');
 
 module.exports = {
 
@@ -20,6 +24,22 @@ module.exports = {
     }
 
     return d.toString('yyyy-MM-dd');
+  },
+
+  request: function(options) {
+    var deferred = Q.defer();
+    request(options, function(err, res, body) {
+      if(err) {
+        deferred.reject(err);
+        return;
+      }
+      if(res.headers['content-type'] === 'application/json') {
+        console.log('body:', body);
+        body = JSON.parse(body);
+      }
+      deferred.resolve(body);
+    });
+    return deferred.promise;
   }
 
 };

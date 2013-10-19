@@ -1,8 +1,8 @@
 <div class="row">
   <div class="col-lg-3"></div>
   <div class="col-lg-6 panel">
-    <h3>Register fitbit</h3>
-    <form class="form-horizontal" method="POST" action="/register/fitbit">
+    <h3>Register Jawbone Up</h3>
+    <form class="form-horizontal" method="POST" action="/register/jawbone">
       <div class="form-group">
         <label for="email" class="col-lg-2 control-label">Email</label>
         <div class="col-lg-10">
