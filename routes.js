@@ -5,12 +5,48 @@ var humanize = require('humanize'),
 
 
 var routes = function(app) {
+  var models = app.get('db').models;
+
+  function stepQuery(startDate, endDate) {
+    var query = 'SELECT name, SUM(steps) AS steps' +
+      ' FROM Users JOIN Stats ON Users.id = Stats.userid' +
+      ' WHERE date >= \''+ util.toSqlDate(startDate) + '\'';
+
+    if(endDate) {
+      query += ' AND date < \'' + util.toSqlDate(endDate) +'\'';
+    }
+
+    query += ' GROUP BY Users.id' +
+      ' ORDER BY steps DESC' +
+      ' LIMIT 5';
+
+    return query;
+  }
 
   /*
    * GET home page.
    */
   app.get('/', function(req, res) {
-    res.render('index', { title: 'Racker Tracker' });
+    var startThisWeek = Date.today().moveToDayOfWeek(0, -1),
+      startLastWeek = startThisWeek.clone().add(-7).days(),
+      sequelize = app.get('db').sequelize,
+      thisWeeksQuery = stepQuery(startThisWeek),
+      lastWeeksQuery = stepQuery(startLastWeek, startThisWeek);
+
+    // TODO: parallelize queries
+    sequelize.query(thisWeeksQuery)
+      .success(function(thisWeeksSteps) {
+
+        sequelize.query(lastWeeksQuery)
+          .success(function(lastWeeksSteps) {
+
+            res.render('index', {
+              title: 'Racker Tracker',
+              thisWeeksSteps: thisWeeksSteps,
+              lastWeeksSteps: lastWeeksSteps
+            });
+          });
+      });
   });
 
   app.get('/register', function(req, res){

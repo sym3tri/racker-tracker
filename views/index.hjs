@@ -3,12 +3,45 @@
 
     <div class="row">
       <div class="col-lg-6">
-        <h2>Steps - Total</h2>
-        <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+        <h2>Top By Steps This Week</h2>
+        <table class="table table-condensed table-hover">
+          <thead>
+            <tr>
+              <td>Name</td>
+              <td>Steps</td>
+            </tr>
+          </thead>
+          {{#thisWeeksSteps}}
+          <tr>
+            <td>{{name}}</td>
+            <td>{{steps}}</td>
+          </tr>
+          {{/thisWeeksSteps}}
+        </table>
       </div>
       <div class="col-lg-6">
         <h2>Calories - Total</h2>
         <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-6">
+        <h2>Top By Steps Last Week</h2>
+        <table class="table table-condensed table-hover">
+          <thead>
+            <tr>
+              <td>Name</td>
+              <td>Steps</td>
+            </tr>
+          </thead>
+          {{#lastWeeksSteps}}
+          <tr>
+            <td>{{name}}</td>
+            <td>{{steps}}</td>
+          </tr>
+          {{/lastWeeksSteps}}
+        </table>
       </div>
     </div>
 
