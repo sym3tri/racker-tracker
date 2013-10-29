@@ -37,8 +37,16 @@ var routes = function(app) {
     sequelize.query(thisWeeksQuery)
       .success(function(thisWeeksSteps) {
 
+        thisWeeksSteps.forEach(function(user) {
+          user.steps = humanize.numberFormat(user.steps, 0);
+        });
+
         sequelize.query(lastWeeksQuery)
           .success(function(lastWeeksSteps) {
+
+            lastWeeksSteps.forEach(function(user) {
+              user.steps = humanize.numberFormat(user.steps, 0);
+            });
 
             res.render('index', {
               title: 'Racker Tracker',
