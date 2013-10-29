@@ -56,7 +56,7 @@ var routes = function(app) {
     });
 
     improvement.sort(function(a, b) {
-      return a.percent - b.percent;
+      return b.percent - a.percent;
     });
 
     if(improvement.length > displayLength) {
