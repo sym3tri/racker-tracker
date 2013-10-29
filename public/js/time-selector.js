@@ -1,21 +1,27 @@
-var timeSelector = $('#time-selector');
-function addTimeSelectorOption(val, label) {
-  timeSelector.append('<option value="' + val +'">' + label +'</option>');
-}
+(function() {
+  var timeSelector = $('#time-selector'),
+    since = timeSelector.data('since');
 
-if (timeSelector.length) {
-  var yesterday = Date.today().add(-1).days(),
-      pastWeek = Date.today().add(-7).days(),
-      pastMonth = Date.today().add(-1).months();
+  function addTimeSelectorOption(val, label) {
+    var option = $('<option>');
+    option.text(label);
+    option.val(val);
+    if(val == since) {
+      option.prop('selected', true);
+    }
+    timeSelector.append(option);
+  }
 
-  addTimeSelectorOption(yesterday.getTime(), 'Today');
-  addTimeSelectorOption(pastWeek.getTime(), 'Past Week');
-  addTimeSelectorOption(pastMonth.getTime(), 'Past 30 days');
-  addTimeSelectorOption(0, 'All Time');
+  if (timeSelector.length) {
+    addTimeSelectorOption('today', 'Today');
+    addTimeSelectorOption('week', 'This Week');
+    addTimeSelectorOption('month', 'This Month');
+    addTimeSelectorOption('all', 'All Time');
 
-  timeSelector.change(function() {
-    var loc = window.location;
-    loc.href = loc.origin + loc.pathname + '?since=' + this.value;
-  });
+    timeSelector.change(function() {
+      var loc = window.location;
+      loc.href = loc.origin + loc.pathname + '?since=' + this.value;
+    });
 
-}
+  }
+})();

@@ -1,6 +1,6 @@
 <h1>list of users</h1>
 
-<select id="time-selector">
+<select id="time-selector" data-since="{{since}}">
 </select>
 
 <table class="table table-condensed table-hover">

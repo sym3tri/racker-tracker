@@ -22,13 +22,35 @@ var routes = function(app) {
   });
 
   app.get('/users', function(req, res) {
-    var since = req.query.since || '0',
+    var since = req.query.since || 'all',
+      dateSince,
       query =
       'SELECT Users.*, sum(Stats.calories) AS calories, sum(Stats.steps) AS steps ' +
       'FROM Users LEFT JOIN ( ' +
-        'SELECT * FROM Stats ' +
-        'WHERE Stats.date > "' + util.parseDate(since) + '" ' +
-      ') Stats ' +
+        'SELECT * FROM Stats ';
+
+    if(since !== 'all') {
+      switch(since) {
+        case 'today':
+          dateSince = Date.today();
+          break;
+        case 'week':
+          // move to previous Sunday
+          dateSince = Date.today().moveToDayOfWeek(0, -1);
+          break;
+        case 'month':
+          dateSince = Date.today().moveToFirstDayOfMonth();
+          break;
+        default:
+          since = 'all';
+      }
+      console.log(since);
+      if(dateSince) {
+        query += 'WHERE Stats.date >= "' + util.toSqlDate(dateSince) + '" ';
+      }
+    }
+
+    query += ') Stats ' +
       'ON Users.id = Stats.userid ' +
       'GROUP BY Users.id';
 
@@ -51,7 +73,8 @@ var routes = function(app) {
       });
       res.render('users', {
         title: 'User List',
-        users: users
+        users: users,
+        since: since
       });
     });
 

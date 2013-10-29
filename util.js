@@ -1,4 +1,6 @@
-var datejs = require('datejs');
+'use strict';
+
+require('datejs');
 
 module.exports = {
 
@@ -19,7 +21,17 @@ module.exports = {
       d = new Date(ts);
     }
 
+console.log('d:', d);
     return d.toString('yyyy-MM-dd');
+  },
+
+  toSqlDate: function(date) {
+    return date.getUTCFullYear() + '-' +
+      this.pad(date.getUTCMonth()+1) + '-' +
+      this.pad(date.getUTCDate()) + ' ' +
+      this.pad(date.getUTCHours()) + ':' +
+      this.pad(date.getUTCMinutes()) + ':' +
+      this.pad(date.getUTCSeconds());
   }
 
 };

@@ -40,15 +40,6 @@ if(argv.help || !argv.start || !argv.end) {
   process.exit();
 }
 
-function toSqlDate(date) {
-  return date.getUTCFullYear() + '-' +
-    util.pad(date.getUTCMonth()+1) + '-' +
-    util.pad(date.getUTCDate()) + ' ' +
-    util.pad(date.getUTCHours()) + ':' +
-    util.pad(date.getUTCMinutes()) + ':' +
-    util.pad(date.getUTCSeconds());
-}
-
 function fetch(user, service, start_date, end_date) {
   console.log('calling fetch: start:',
     start_date, 'end:', end_date, 'user', user.id);
@@ -60,7 +51,7 @@ function fetch(user, service, start_date, end_date) {
       Stats.find({
         'where': {
           'userid': user.id,
-          'date': toSqlDate(day.date)
+          'date': util.toSqlDate(day.date)
         }
       })
       .success(function(stat) {
