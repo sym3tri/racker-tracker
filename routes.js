@@ -1,14 +1,17 @@
 'use strict';
 
 var humanize = require('humanize'),
+  Q = require('q'),
   util = require('./util');
 
 
 var routes = function(app) {
-  var models = app.get('db').models;
+  var models = app.get('db').models,
+    sequelize = app.get('db').sequelize,
+    displayLength = 5;
 
   function stepQuery(startDate, endDate) {
-    var query = 'SELECT name, SUM(steps) AS steps' +
+    var query = 'SELECT Users.id, name, SUM(steps) AS steps' +
       ' FROM Users JOIN Stats ON Users.id = Stats.userid' +
       ' WHERE date >= \''+ util.toSqlDate(startDate) + '\'';
 
@@ -17,10 +20,54 @@ var routes = function(app) {
     }
 
     query += ' GROUP BY Users.id' +
-      ' ORDER BY steps DESC' +
-      ' LIMIT 5';
+      ' ORDER BY steps DESC';
+      // ' LIMIT 5';
 
     return query;
+  }
+
+  function qquery(query) {
+    var deferred = Q.defer();
+
+    sequelize.query(query)
+      .success(function(data) {
+        deferred.resolve(data);
+      });
+
+    return deferred.promise;
+  }
+
+  function getMostImproved(lastWeek, thisWeek) {
+    var dayOfWeek = Date.today().getDay()+1,
+      improvement = [],
+      lastWeekLookup = {};
+
+    lastWeek.forEach(function(user) {
+      lastWeekLookup[user.id] = user.steps;
+    });
+
+    thisWeek.forEach(function(user) {
+      if(user.id in lastWeekLookup) {
+        improvement.push({
+          name: user.name,
+          percent: user.steps/(lastWeekLookup[user.id]*dayOfWeek/7) * 100
+        });
+      }
+    });
+
+    improvement.sort(function(a, b) {
+      return a.percent - b.percent;
+    });
+
+    if(improvement.length > displayLength) {
+      improvement.length = displayLength;
+    }
+
+    improvement.forEach(function(user) {
+      user.percent = humanize.numberFormat(user.percent);
+    });
+
+    return improvement;
   }
 
   /*
@@ -29,32 +76,39 @@ var routes = function(app) {
   app.get('/', function(req, res) {
     var startThisWeek = Date.today().moveToDayOfWeek(0, -1),
       startLastWeek = startThisWeek.clone().add(-7).days(),
-      sequelize = app.get('db').sequelize,
       thisWeeksQuery = stepQuery(startThisWeek),
-      lastWeeksQuery = stepQuery(startLastWeek, startThisWeek);
+      lastWeeksQuery = stepQuery(startLastWeek, startThisWeek),
+      mostImproved;
 
-    // TODO: parallelize queries
-    sequelize.query(thisWeeksQuery)
-      .success(function(thisWeeksSteps) {
+    Q.spread([
+      qquery(thisWeeksQuery),
+      qquery(lastWeeksQuery)
+      ],
+      function(thisWeeksSteps, lastWeeksSteps) {
+        mostImproved = getMostImproved(lastWeeksSteps, thisWeeksSteps);
 
+        if(thisWeeksSteps.length > displayLength) {
+          thisWeeksSteps.length = displayLength;
+        }
+
+        if(lastWeeksSteps.length > displayLength) {
+          lastWeeksSteps.length = displayLength;
+        }
         thisWeeksSteps.forEach(function(user) {
           user.steps = humanize.numberFormat(user.steps, 0);
         });
+        lastWeeksSteps.forEach(function(user) {
+          user.steps = humanize.numberFormat(user.steps, 0);
+        });
 
-        sequelize.query(lastWeeksQuery)
-          .success(function(lastWeeksSteps) {
-
-            lastWeeksSteps.forEach(function(user) {
-              user.steps = humanize.numberFormat(user.steps, 0);
-            });
-
-            res.render('index', {
-              title: 'Racker Tracker',
-              thisWeeksSteps: thisWeeksSteps,
-              lastWeeksSteps: lastWeeksSteps
-            });
-          });
+        res.render('index', {
+          title: 'Racker Tracker',
+          thisWeeksSteps: thisWeeksSteps,
+          lastWeeksSteps: lastWeeksSteps,
+          mostImproved: mostImproved
+        });
       });
+    return;
   });
 
   app.get('/register', function(req, res){

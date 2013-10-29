@@ -48,7 +48,21 @@
     <div class="row">
       <div class="col-lg-6">
         <h2>Steps - Most Improved</h2>
-        <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+        <p>This is week over week adjusted improvment</p>
+        <table class="table table-condensed table-hover">
+          <thead>
+            <tr>
+              <td>Name</td>
+              <td>Percent</td>
+            </tr>
+          </thead>
+          {{#mostImproved}}
+          <tr>
+            <td>{{name}}</td>
+            <td>{{percent}}%</td>
+          </tr>
+          {{/mostImproved}}
+        </table>
       </div>
       <div class="col-lg-6">
         <h2>Calories - Most Improved</h2>
