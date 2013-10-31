@@ -50,7 +50,7 @@ var routes = function(app) {
       if(user.id in lastWeekLookup) {
         improvement.push({
           name: user.name,
-          percent: user.steps/(lastWeekLookup[user.id]*dayOfWeek/7) * 100
+          percent: (user.steps/(lastWeekLookup[user.id]*dayOfWeek/7) - 1) * 100
         });
       }
     });
