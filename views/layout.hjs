@@ -49,9 +49,11 @@
     </div>
 
     <script src="/bower_components/jquery/jquery.min.js"></script>
+    <script src="/bower_components/jquery-timeago/jquery.timeago.js"></script>
     <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/bower_components/datejs/build/date.js"></script>
     <script src="/js/time-selector.js"></script>
+    <script src="/js/timeago.js"></script>
 
   </body>
 </html>

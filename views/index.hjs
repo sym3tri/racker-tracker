@@ -9,12 +9,18 @@
             <tr>
               <td>Name</td>
               <td>Steps</td>
+              <td>updated</td>
             </tr>
           </thead>
           {{#thisWeeksSteps}}
           <tr>
             <td>{{name}}</td>
             <td>{{steps}}</td>
+            <td>
+              <small>
+                <time datetime="{{lastUpdatedISO}}">{{lastUpdatedReadable}}</time>
+              </small>
+            </td>
           </tr>
           {{/thisWeeksSteps}}
         </table>

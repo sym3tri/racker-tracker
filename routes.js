@@ -11,7 +11,8 @@ var routes = function(app) {
     displayLength = 5;
 
   function stepQuery(startDate, endDate) {
-    var query = 'SELECT Users.id, name, SUM(steps) AS steps' +
+    var query = 'SELECT Users.id, name, SUM(steps) AS steps, ' +
+        ' MAX(date) as lastDate, MAX(Stats.updatedAt) as lastUpdated' +
       ' FROM Users JOIN Stats ON Users.id = Stats.userid' +
       ' WHERE date >= \''+ util.toSqlDate(startDate) + '\'';
 
@@ -96,6 +97,17 @@ var routes = function(app) {
         }
         thisWeeksSteps.forEach(function(user) {
           user.steps = humanize.numberFormat(user.steps, 0);
+
+          // This is to handle the case were data was fetced
+          // more recenlty then it was updated at the source
+          if(user.lastDate === user.lastUpdated.clearTime()) {
+            user.updated = user.lastUpdated;
+          }
+          else {
+            user.updated = user.lastDate;
+          }
+          user.lastUpdatedISO = user.updated.toISOString();
+          user.lastUpdatedReadable = user.updated.toString('MMM dd');
         });
         lastWeeksSteps.forEach(function(user) {
           user.steps = humanize.numberFormat(user.steps, 0);
