@@ -166,21 +166,25 @@ var routes = function(app) {
 
     app.get('db').sequelize.query(query)
     .success(function(users) {
-      users.forEach(function(user, i) {
+      users.forEach(function(user) {
         if(null !== user.steps) {
-          users[i].steps = humanize.numberFormat(user.steps, 0);
+          user.steps = humanize.numberFormat(user.steps, 0);
         }
         else {
-          users[i].steps = 0;
+          user.steps = 0;
         }
 
         if(null !== user.calories) {
-          users[i].calories = humanize.numberFormat(user.calories, 0);
+          user.calories = humanize.numberFormat(user.calories, 0);
         }
         else {
-          users[i].calories = 0;
+          user.calories = 0;
         }
+
+        user.createdAtISO = user.createdAt.toISOString();
+        user.createdAtReadable = user.createdAt.toString('MMMM dd, yyyy');
       });
+
       res.render('users', {
         title: 'User List',
         users: users,

@@ -7,7 +7,7 @@
   <thead>
     <tr>
       <td>Name</td>
-      <td>Registered Date</td>
+      <td>Registered</td>
       <td>Steps</td>
       <td>Calories</td>
     </tr>
@@ -17,7 +17,7 @@
     {{#users}}
     <tr>
       <td>{{name}}</td>
-      <td>{{createdAt}}</td>
+      <td><time datetime="{{createdAtISO}}">{{createdAtReadable}}</time></td>
       <td>{{steps}}</td>
       <td>{{calories}}</td>
     </tr>
