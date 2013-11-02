@@ -13,7 +13,7 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: false,
         notEmpty: true
       },
-      service: DataTypes.ENUM('nike', 'fitbit'),
+      service: DataTypes.ENUM('nike', 'fitbit', 'bodymedia'),
       token: DataTypes.STRING,
       secret: DataTypes.STRING,
       active: {
