@@ -155,7 +155,10 @@ var routes = function(app) {
           break;
         case 'week':
           // move to previous Sunday
-          dateSince = Date.today().moveToDayOfWeek(0, -1);
+          dateSince = Date.today();
+          if(dateSince.getDay() !== 0) {
+            dateSince.moveToDayOfWeek(0, -1);
+          }
           break;
         case 'month':
           dateSince = Date.today().moveToFirstDayOfMonth();
