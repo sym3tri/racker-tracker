@@ -75,11 +75,21 @@ var routes = function(app) {
    * GET home page.
    */
   app.get('/', function(req, res) {
-    var startThisWeek = Date.today().moveToDayOfWeek(0, -1),
-      startLastWeek = startThisWeek.clone().add(-7).days(),
-      thisWeeksQuery = stepQuery(startThisWeek),
-      lastWeeksQuery = stepQuery(startLastWeek, startThisWeek),
+    var startThisWeek = Date.today(),
+      startLastWeek,
+      thisWeeksQuery,
+      lastWeeksQuery,
       mostImproved;
+
+    if(startThisWeek.getDay() !== 0) {
+      startThisWeek.moveToDayOfWeek(0, -1);
+    }
+    startLastWeek = startThisWeek.clone().add(-7).days();
+
+    thisWeeksQuery = stepQuery(startThisWeek);
+    lastWeeksQuery = stepQuery(startLastWeek, startThisWeek);
+    console.log('startThisWeek:', startThisWeek);
+    console.log('startLastWeek:', startLastWeek);
 
     Q.spread([
       qquery(thisWeeksQuery),
