@@ -61,6 +61,12 @@ function fetch(user, service, start_date, end_date) {
             'date': day.date
           });
         }
+        else {
+          // don't update unless the data is new
+          if(stat.calories === day.calories && stat.steps === day.steps) {
+            return;
+          }
+        }
         stat.calories = day.calories;
         stat.steps = day.steps;
         stat.save();
