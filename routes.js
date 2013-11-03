@@ -88,8 +88,6 @@ var routes = function(app) {
 
     thisWeeksQuery = stepQuery(startThisWeek);
     lastWeeksQuery = stepQuery(startLastWeek, startThisWeek);
-    console.log('startThisWeek:', startThisWeek);
-    console.log('startLastWeek:', startLastWeek);
 
     Q.spread([
       qquery(thisWeeksQuery),
@@ -110,14 +108,15 @@ var routes = function(app) {
 
           // This is to handle the case were data was fetced
           // more recenlty then it was updated at the source
-          if(user.lastDate === user.lastUpdated.clearTime()) {
+          if(user.lastDate.toString('yyyy-MM-dd') ===
+                user.lastUpdated.toString('yyyy-MM-dd')) {
             user.updated = user.lastUpdated;
           }
           else {
             user.updated = user.lastDate;
           }
           user.lastUpdatedISO = user.updated.toISOString();
-          user.lastUpdatedReadable = user.updated.toString('MMM dd');
+          user.lastUpdatedReadable = user.updated.toString('MMM dd HH:mm');
         });
         lastWeeksSteps.forEach(function(user) {
           user.steps = humanize.numberFormat(user.steps, 0);
