@@ -75,7 +75,8 @@ Nike.prototype.postHandler = function(req, res) {
     name: req.body.name,
     service: 'nike',
     token: req.body.token,
-    active: true
+    active: true,
+    OfficeId: 1
   };
 
   User.find({ where: { email: req.body.email } })

@@ -13,6 +13,7 @@ module.exports = function(app) {
    */
   app.get('/api/leaders', require('./api/leaders')(app));
   app.get('/api/users', require('./api/users')(app));
+  app.get('/api/data', require('./api/data')(app));
 
 
   /**
