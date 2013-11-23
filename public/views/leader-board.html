@@ -1,0 +1,67 @@
+<div class="page-leader-board">
+
+  <h1>Racker Tracker&copy; - Leader Board</h1>
+
+  {{state}}
+
+  <div class="row">
+    <div class="col-lg-12">
+      <h2>This Week</h2>
+      <table class="table table-condensed table-hover">
+        <thead>
+          <tr>
+            <td>Name</td>
+            <td>Steps</td>
+            <td>Updated</td>
+          </tr>
+        </thead>
+        <tr ng-repeat="stat in thisWeeksSteps">
+          <td>{{stat.name}}</td>
+          <td>{{stat.steps}}</td>
+          <td>
+            <small>
+              <time datetime="{{stat.lastUpdatedISO}}">{{stat.lastUpdatedReadable}}</time>
+            </small>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <h2>Last Week</h2>
+      <table class="table table-condensed table-hover">
+        <thead>
+          <tr>
+            <td>Name</td>
+            <td>Steps</td>
+          </tr>
+        </thead>
+        <tr ng-repeat="stat in lastWeeksSteps">
+          <td>{{stat.name}}</td>
+          <td>{{stat.steps}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <h2>Most Improved</h2>
+      <table class="table table-condensed table-hover">
+        <thead>
+          <tr>
+            <td>Name</td>
+            <td>Steps</td>
+          </tr>
+        </thead>
+        <tr ng-repeat="stat in mostImproved">
+          <td>{{stat.name}}</td>
+          <td>{{stat.steps}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,35 @@
+<div class="page-register-nike">
+
+  <div class="row">
+    <div class="col-lg-6 col-lg-offset-3 panel">
+      <h3>Register Nike Fuelband</h3>
+      <form class="form-horizontal" method="POST" action="/api/register/nike">
+        <div class="form-group">
+          <label for="email" class="col-lg-2 control-label">Email</label>
+          <div class="col-lg-10">
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="name" class="col-lg-2 control-label">Full Name</label>
+          <div class="col-lg-10">
+            <input type="text" class="form-control" id="name" name="name" placeholder="Full Name">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="token" class="col-lg-2 control-label">Auth Token</label>
+          <div class="col-lg-10">
+            <input type="text" class="form-control" id="token" name="token" placeholder="token">
+            (<a target="_blank" href="https://developer.nike.com/console">generate here</a> - dont ask *sigh*)
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-lg-offset-2 col-lg-10">
+            <button type="submit" class="btn btn-primary">Register!</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

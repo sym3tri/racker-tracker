@@ -1,86 +1,41 @@
-<div class="row">
-  <div class="col-lg-12">
+<!DOCTYPE html>
+<html lang="en" ng-app="TrackerApp">
 
-    <div class="row">
-      <div class="col-lg-6">
-        {{#thisWeeksSteps.length}}
-        <h2>Top By Steps This Week</h2>
-        <table class="table table-condensed table-hover">
-          <thead>
-            <tr>
-              <td>Name</td>
-              <td>Steps</td>
-              <td>updated</td>
-            </tr>
-          </thead>
-          {{#thisWeeksSteps}}
-          <tr>
-            <td>{{name}}</td>
-            <td>{{steps}}</td>
-            <td>
-              <small>
-                <time datetime="{{lastUpdatedISO}}">{{lastUpdatedReadable}}</time>
-              </small>
-            </td>
-          </tr>
-          {{/thisWeeksSteps}}
-        </table>
-        {{/thisWeeksSteps.length}}
-      </div>
-      <div class="col-lg-6">
-        <h2>Calories - Total</h2>
-        <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-      </div>
+  <head>
+    <meta charset="utf-8">
+    <title>Racker Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/favicon.png">
+  </head>
+
+  <body>
+
+    <div id="nav" ng-include="'/views/nav.html'"></div>
+
+    <div id="view-container" class="container" ng-view>
+      <!-- All Template Conetent here -->
     </div>
 
-    <div class="row">
-      <div class="col-lg-6">
-        {{#lastWeeksSteps.length}}
-        <h2>Top By Steps Last Week</h2>
-        <table class="table table-condensed table-hover">
-          <thead>
-            <tr>
-              <td>Name</td>
-              <td>Steps</td>
-            </tr>
-          </thead>
-          {{#lastWeeksSteps}}
-          <tr>
-            <td>{{name}}</td>
-            <td>{{steps}}</td>
-          </tr>
-          {{/lastWeeksSteps}}
-        </table>
-        {{/lastWeeksSteps.length}}
-      </div>
-    </div>
+    <div id="footer" ng-include="'/views/footer.html'"></div>
 
-    <div class="row">
-      <div class="col-lg-6">
-        {{#mostImproved.length}}
-        <h2>Steps - Most Improved</h2>
-        <p>This is week over week adjusted improvment</p>
-        <table class="table table-condensed table-hover">
-          <thead>
-            <tr>
-              <td>Name</td>
-              <td>Percent</td>
-            </tr>
-          </thead>
-          {{#mostImproved}}
-          <tr>
-            <td>{{name}}</td>
-            <td>{{percent}}%</td>
-          </tr>
-          {{/mostImproved}}
-        </table>
-        {{/mostImproved.length}}
-      </div>
-      <div class="col-lg-6">
-        <h2>Calories - Most Improved</h2>
-        <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-      </div>
-    </div>
+    <script src="/bower_components/jquery/jquery.min.js"></script>
+    <script src="/bower_components/jquery-timeago/jquery.timeago.js"></script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/bower_components/datejs/build/date.js"></script>
+    <script src="/js/time-selector.js"></script>
+    <script src="/js/timeago.js"></script>
 
-  </div>
-</div>
+
+    <script src="/bower_components/angular/angular.min.js"></script>
+    <script src="/bower_components/angular-route/angular-route.min.js"></script>
+    <script src="/bower_components/angular-resource/angular-resource.min.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/controllers/leader-board.js"></script>
+    <script src="/js/controllers/users.js"></script>
+
+  </body>
+</html>
