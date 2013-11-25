@@ -4,6 +4,7 @@ var optimist = require('optimist'),
   util = require('./util'),
   config = require('./config-loader'),
   models = require('./models')(config).models,
+  modules = require('./modules'),
   User = models.User,
   Stats = models.Stats,
   options = optimist
@@ -86,41 +87,44 @@ function fetch(user, service, start_date, end_date) {
 }
 
 
-require('./modules')(config)
-.then(function(modules) {
+var serviceCache = {};
 
-  User.findAll({
-    where: {
-      active: true
-    }
-  }).success(function(users) {
-    if(!users) {
+User.findAll({
+  where: {
+    active: true
+  }
+})
+.success(function(users) {
+  if (!users) {
+    return;
+  }
+
+  users.forEach(function(user) {
+    if (!user.service) {
       return;
     }
-    users.forEach(function(user) {
-      if(!user.service) {
-        return;
-      }
-
-      if(argv.force) {
-        fetch(user, modules[user.service], argv.start, argv.end);
-      }
-      else {
-        Stats.find({
-          'where': {'userid': user.id },
-          'order': 'date DESC'
-        })
-        .success(function(latest_stat) {
-          var start_date;
-          if(latest_stat) {
-            start_date = latest_stat.date;
-          } else {
-            start_date = argv.start.clone();
-          }
-
-          fetch(user, modules[user.service], start_date, argv.end);
-        });
-      }
-    });
+    // Lazy instantiate new module instances as needed.
+    if (!serviceCache[user.service]) {
+      serviceCache[user.service] =
+        new modules[user.service](config[user.service]);
+    }
+    if (argv.force) {
+      fetch(user, serviceCache[user.service], argv.start, argv.end);
+    } else {
+      Stats.find({
+        'where': {'userid': user.id },
+        'order': 'date DESC'
+      })
+      .success(function(latest_stat) {
+        var start_date;
+        if(latest_stat) {
+          start_date = latest_stat.date;
+        } else {
+          start_date = argv.start.clone();
+        }
+        fetch(user, serviceCache[user.service], start_date, argv.end);
+      });
+    }
   });
+
 });

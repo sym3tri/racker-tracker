@@ -5,53 +5,6 @@ var request = require('request'),
     Q = require('q'),
     endpoint = 'https://api.nike.com/me/sport/activities';
 
-function webhandler(app) {
-  app.get('/register/nike', function(req, res){
-    res.render('register/nike', { title: 'Register' });
-  });
-
-  app.post('/register-nike', function(req, res) {
-    console.log(req.body);
-
-    var User = app.get('db').models.User;
-
-    var userValues = {
-      email: req.body.email,
-      name: req.body.name,
-      service: 'nike',
-      token: req.body.token,
-      active: true
-    };
-
-    User.find({ where: { email: req.body.email } })
-      .success(function(user) {
-        if (user) {
-          user.updateAttributes(userValues);
-        } else {
-          user = User.build(userValues);
-        }
-
-        user.save()
-          .error(function(e) {
-            console.log('DB ERROR!!!');
-            console.log(e);
-            res.send('ERROR: ' + e.code);
-          })
-          .success(function() {
-            console.log('SAVE OK!!!');
-            res.send('it worked! thanks ' + user.name);
-          });
-
-      });
-
-    // retrieve token
-
-    // save token in DB
-  });
-
-
-}
-
 function filterFuelBand(activityItem) {
   return activityItem.deviceType === 'FUELBAND';
 }
@@ -71,7 +24,12 @@ function parseDate(date) {
     util.pad(d.getDate());
 }
 
-function fetch(user, startDate, endDate) {
+function Nike(config, app) {
+  this.app = app;
+  this.config = config;
+}
+
+Nike.prototype.fetch = function(user, startDate, endDate) {
   var result, deferred;
 
   deferred = Q.defer();
@@ -105,44 +63,38 @@ function fetch(user, startDate, endDate) {
     }
   });
   return deferred.promise;
-}
-
-// XXX: this solution is the old hacky api that uses cookies.
-// wont use this, but will leave code for now since it works.
-function login(username, password) {
-  var result, deferred, reqBody;
-
-  reqBody = 'app=b31990e7-8583-4251-808f-9dc67b40f5d2&format=json&contentType=plaintext&email=' + 
-    encodeURIComponent(username) + '&password=' + encodeURIComponent(password);
-
-  deferred = Q.defer();
-  request({
-    method: 'POST',
-    followRedirect: true,
-    followAllRedirects: true,
-    uri: 'https://secure-nikeplus.nike.com/nsl/services/user/login?app=b31990e7-8583-4251-808f-9dc67b40f5d2&format=json&contentType=plaintext',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-    },
-    body: reqBody
-  }, function(err, res, body) {
-    if (err) {
-      console.log(err);
-      deferred.reject(new Error(err));
-    } else if (res.statusCode !== 200) {
-      deferred.reject(new Error(body));
-    } else {
-      result = body;
-      deferred.resolve(result);
-    }
-  });
-  return deferred.promise;
-}
-
-module.exports = function nike(config) {
-  return {
-    webhandler: webhandler,
-    fetch: fetch,
-    login: login
-  };
 };
+
+Nike.prototype.postHandler = function(req, res) {
+  var User, userValues;
+
+  User = this.app.get('db').models.User;
+
+  userValues = {
+    email: req.body.email,
+    name: req.body.name,
+    service: 'nike',
+    token: req.body.token,
+    active: true
+  };
+
+  User.find({ where: { email: req.body.email } })
+    .success(function(user) {
+      if (user) {
+        user.updateAttributes(userValues);
+      } else {
+        user = User.build(userValues);
+      }
+      user.save()
+        .success(function() {
+          res.redirect('/register/complete');
+        })
+        .error(function(e) {
+          console.log('DB ERROR!!!');
+          console.log(e);
+          res.send('ERROR: ' + e.code);
+        });
+    });
+};
+
+module.exports = Nike;

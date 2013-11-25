@@ -1,0 +1,28 @@
+<div class="page-register-fitbit">
+
+  <div class="row">
+    <div class="col-lg-6 col-lg-offset-3 panel">
+      <h3>Register Fitbit</h3>
+      <form class="form-horizontal" method="POST" action="/api/register/fitbit">
+        <div class="form-group">
+          <label for="email" class="col-lg-2 control-label">Email</label>
+          <div class="col-lg-10">
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="name" class="col-lg-2 control-label">Full Name</label>
+          <div class="col-lg-10">
+            <input type="text" class="form-control" id="name" name="name" placeholder="Full Name" value="{{user.name}}">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-lg-offset-2 col-lg-10">
+            <button type="submit" class="btn btn-primary">Register!</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
