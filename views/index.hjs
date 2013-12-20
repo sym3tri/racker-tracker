@@ -22,20 +22,21 @@
 
     <div id="footer" ng-include="'/views/footer.html'"></div>
 
+    <!-- deps -->
     <script src="/bower_components/jquery/jquery.min.js"></script>
-    <script src="/bower_components/jquery-timeago/jquery.timeago.js"></script>
     <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/bower_components/datejs/build/date.js"></script>
-    <script src="/js/time-selector.js"></script>
-    <script src="/js/timeago.js"></script>
-
-
     <script src="/bower_components/angular/angular.min.js"></script>
     <script src="/bower_components/angular-route/angular-route.min.js"></script>
     <script src="/bower_components/angular-resource/angular-resource.min.js"></script>
+    <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+
+    <!-- app -->
     <script src="/js/app.js"></script>
+    <!-- controllers -->
     <script src="/js/controllers/leader-board.js"></script>
     <script src="/js/controllers/users.js"></script>
+    <!-- directives -->
 
   </body>
 </html>
