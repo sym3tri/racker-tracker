@@ -3,3 +3,11 @@ body {
   padding-bottom: 40px;
   background-color: #efefef;
 }
+
+nav-link {
+  display: none !important;
+}
+
+.nav-link {
+  cursor: pointer;
+}

@@ -23,13 +23,14 @@
     <div id="footer" ng-include="'/views/footer.html'"></div>
 
     <!-- deps -->
-    <script src="/bower_components/jquery/jquery.min.js"></script>
-    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/bower_components/datejs/build/date.js"></script>
     <script src="/bower_components/angular/angular.min.js"></script>
     <script src="/bower_components/angular-route/angular-route.min.js"></script>
     <script src="/bower_components/angular-resource/angular-resource.min.js"></script>
     <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script src="/bower_components/underscore/underscore-min.js"></script>
+    <script src="/bower_components/underscore.string/dist/underscore.string.min.js"></script>
+    <script src="/js/dep-shims.js"></script>
 
     <!-- app -->
     <script src="/js/app.js"></script>
@@ -37,6 +38,7 @@
     <script src="/js/controllers/leader-board.js"></script>
     <script src="/js/controllers/users.js"></script>
     <!-- directives -->
+    <script src="/js/directives/nav-link.js"></script>
 
   </body>
 </html>
