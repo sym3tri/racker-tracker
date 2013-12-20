@@ -3,7 +3,8 @@
 var TrackerApp = angular.module('TrackerApp', [
   'ngRoute',
   'ngResource',
-  'ui.bootstrap'
+  'ui.bootstrap',
+  'underscore'
 ]);
 
 TrackerApp.constant('uris', {
