@@ -11,3 +11,7 @@ nav-link {
 .nav-link {
   cursor: pointer;
 }
+
+.leader-table .rank {
+  width: 20px;
+}
