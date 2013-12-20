@@ -16,6 +16,11 @@ module.exports = function(sequelize, DataTypes) {
       service: DataTypes.ENUM('nike', 'fitbit'),
       token: DataTypes.STRING,
       secret: DataTypes.STRING,
+      private: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
       active: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

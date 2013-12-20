@@ -28,10 +28,7 @@ console.log('d:', d);
   toSqlDate: function(date) {
     return date.getUTCFullYear() + '-' +
       this.pad(date.getUTCMonth()+1) + '-' +
-      this.pad(date.getUTCDate()) + ' ' +
-      this.pad(date.getUTCHours()) + ':' +
-      this.pad(date.getUTCMinutes()) + ':' +
-      this.pad(date.getUTCSeconds());
+      this.pad(date.getUTCDate());
   }
 
 };

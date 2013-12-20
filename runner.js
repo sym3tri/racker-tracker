@@ -59,7 +59,7 @@ function fetch(user, service, start_date, end_date) {
         if(!stat) {
           stat = Stats.build({
             'userid': user.id,
-            'date': day.date
+            'date': util.toSqlDate(day.date)
           });
         }
         else {

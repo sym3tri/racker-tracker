@@ -1,9 +1,10 @@
+'use strict';
+
 var express = require('express'),
   http = require('http'),
   path = require('path'),
   app = module.exports = express(),
-  config = require('./config-loader'),
-  routes;
+  config = require('./config-loader');
 
 // all environments
 app.set('config', config);
@@ -27,7 +28,7 @@ if ('development' === app.get('env')) {
   app.use(express.errorHandler());
 }
 
-routes = require('./routes')(app);
+require('./routes')(app);
 app.use(app.router);
 
 http.createServer(app).listen(app.get('port'), function(){

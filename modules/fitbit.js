@@ -173,6 +173,8 @@ Fitbit.prototype.postHandler = function(req, res) {
   userValues.name = req.body.name;
   userValues.email = req.body.email;
   userValues.active = true;
+  userValues.OfficeId = 1;
+
   User.find({ where: { email: userValues.email } })
     .success(function(user) {
       if (user) {
