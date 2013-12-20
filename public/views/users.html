@@ -2,9 +2,28 @@
 
   <h1>All Users</h1>
 
-  <select id="time-selector" data-since="{{since}}"></select>
+  <div class="btn-group btn-group-sm">
+    <button type="button"
+      class="btn btn-default btn-small"
+      ng-model="since"
+      btn-radio="'all'">All Time</button>
+    <button type="button"
+      class="btn btn-default"
+      ng-model="since"
+      btn-radio="'month'">This Month</button>
+    <button type="button"
+      class="btn btn-default"
+      ng-model="since"
+      btn-radio="'week'">This Week</button>
+    <button type="button"
+      class="btn btn-default"
+      ng-model="since"
+      btn-radio="'today'">Today</button>
+  </div>
 
-  <table class="table table-condensed table-hover">
+  <div ng-show="state">{{state}}</div>
+
+  <table ng-hide="state" class="table table-condensed table-hover">
     <thead>
       <tr>
         <td>Name</td>

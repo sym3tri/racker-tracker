@@ -2,7 +2,9 @@
 
 var TrackerApp = angular.module('TrackerApp', [
   'ngRoute',
-  'ngResource']);
+  'ngResource',
+  'ui.bootstrap'
+]);
 
 TrackerApp.constant('uris', {
   leaderBoard: '/api/leaders',
@@ -22,7 +24,8 @@ TrackerApp.config(function($routeProvider, $locationProvider) {
     })
     .when('/users', {
       templateUrl: '/views/users.html',
-      controller: 'UsersCtrl'
+      controller: 'UsersCtrl',
+      reloadOnSearch: false
     })
     .when('/user', {
       templateUrl: '/views/user.html',
