@@ -4,17 +4,17 @@ var humanize = require('humanize'),
     util = require('../util');
 
 function users(app) {
-  var models = app.get('db').models,
-    sequelize = app.get('db').sequelize,
+  var sequelize = app.get('db').sequelize,
     handler;
 
   handler = function(req, res) {
     var since = req.query.since || 'all',
       dateSince,
       query =
-      'SELECT Users.*, sum(Stats.calories) AS calories, sum(Stats.steps) AS steps ' +
+      'SELECT name, Users.createdAt, ' +
+      'SUM(calories) AS calories, SUM(steps) AS steps ' +
       'FROM Users LEFT JOIN ( ' +
-        'SELECT * FROM Stats ';
+        'SELECT userid, calories, steps FROM Stats ';
 
     if(since !== 'all') {
       switch(since) {
@@ -42,9 +42,10 @@ function users(app) {
 
     query += ') Stats ' +
       'ON Users.id = Stats.userid ' +
+      'WHERE private = false ' +
       'GROUP BY Users.id';
 
-    app.get('db').sequelize.query(query)
+    sequelize.query(query)
     .success(function(users) {
       users.forEach(function(user) {
         if(null !== user.steps) {
