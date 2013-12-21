@@ -11,6 +11,10 @@ TrackerApp.controller('UsersCtrl', function($scope, $http, $location, uris) {
     $scope.since = 'week';
   }
 
+  $scope.formatNumber = function(val) {
+    return humanize.numberFormat(val, 0);
+  };
+
   $scope.$watch('since', function fetchUsers(since) {
     $scope.state = 'loading...';
     $location.search('since', since);

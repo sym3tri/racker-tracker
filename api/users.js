@@ -1,7 +1,6 @@
 'use strict';
 
-var humanize = require('humanize'),
-    util = require('../util');
+var util = require('../util');
 
 function users(app) {
   var models = app.get('db').models,
@@ -47,20 +46,12 @@ function users(app) {
     app.get('db').sequelize.query(query)
     .success(function(users) {
       users.forEach(function(user) {
-        if(null !== user.steps) {
-          user.steps = humanize.numberFormat(user.steps, 0);
-        }
-        else {
+        if(null === user.steps) {
           user.steps = 0;
         }
-
-        if(null !== user.calories) {
-          user.calories = humanize.numberFormat(user.calories, 0);
-        }
-        else {
+        if(null === user.calories) {
           user.calories = 0;
         }
-
         user.createdAtISO = user.createdAt.toISOString();
         user.createdAtReadable = user.createdAt.toString('MMMM dd, yyyy');
       });

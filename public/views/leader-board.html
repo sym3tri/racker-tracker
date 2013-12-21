@@ -21,7 +21,7 @@
           <tr ng-repeat="stat in thisWeeksSteps | orderBy:'steps':true">
             <td>{{$index + 1}}</td>
             <td>{{stat.name}}</td>
-            <td>{{stat.steps}}</td>
+            <td>{{formatNumber(stat.steps)}}</td>
             <td>
               <small>
                 <time datetime="{{stat.lastUpdatedISO}}">{{stat.lastUpdatedReadable}}</time>
@@ -50,7 +50,7 @@
           <tr ng-repeat="stat in lastWeeksSteps | orderBy:'steps':true">
             <td>{{$index + 1}}</td>
             <td>{{stat.name}}</td>
-            <td>{{stat.steps}}</td>
+            <td>{{formatNumber(stat.steps)}}</td>
           </tr>
         </table>
       </div>
@@ -75,7 +75,7 @@
           <tr ng-repeat="stat in mostImproved | orderBy:'percent':true">
             <td>{{$index + 1}}</td>
             <td>{{stat.name}}</td>
-            <td>{{stat.percent}}%</td>
+            <td>{{formatNumber(stat.percent)}}%</td>
           </tr>
         </table>
       </div>

@@ -8,6 +8,10 @@ TrackerApp.controller('LeaderBoardCtrl', function($scope, $http, uris) {
   $scope.lastWeeksSteps = null;
   $scope.mostImproved = null;
 
+  $scope.formatNumber = function(val) {
+    return humanize.numberFormat(val, 0);
+  };
+
   $http({
     method: 'GET',
     url: uris.leaderBoard
