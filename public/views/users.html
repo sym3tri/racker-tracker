@@ -39,8 +39,8 @@
         <tr ng-repeat="user in users | orderBy:'steps':true">
           <td>{{user.name}}</td>
           <td><time datetime="{{user.createdAtISO}}">{{user.createdAtReadable}}</time></td>
-          <td>{{user.steps}}</td>
-          <td>{{user.calories}}</td>
+          <td>{{formatNumber(user.steps)}}</td>
+          <td>{{formatNumber(user.calories)}}</td>
         </tr>
       </tbody>
     </table>

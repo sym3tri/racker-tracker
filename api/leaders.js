@@ -1,7 +1,6 @@
 'use strict';
 
-var humanize = require('humanize'),
-    Q = require('q'),
+var Q = require('q'),
     util = require('../util'),
     DISPLAY_LENGTH = 5;
 
@@ -59,10 +58,6 @@ function getMostImproved(lastWeek, thisWeek) {
     improvement.length = DISPLAY_LENGTH;
   }
 
-  improvement.forEach(function(user) {
-    user.percent = humanize.numberFormat(user.percent);
-  });
-
   return improvement;
 }
 
@@ -101,8 +96,6 @@ function leaders(app) {
           lastWeeksSteps.length = DISPLAY_LENGTH;
         }
         thisWeeksSteps.forEach(function(user) {
-          user.steps = humanize.numberFormat(user.steps, 0);
-
           // This is to handle the case were data was fetced
           // more recenlty then it was updated at the source
           if(user.lastDate.toString('yyyy-MM-dd') ===
@@ -114,9 +107,6 @@ function leaders(app) {
           }
           user.lastUpdatedISO = user.updated.toISOString();
           user.lastUpdatedReadable = user.updated.toString('MMM dd HH:mm');
-        });
-        lastWeeksSteps.forEach(function(user) {
-          user.steps = humanize.numberFormat(user.steps, 0);
         });
 
         res.json({

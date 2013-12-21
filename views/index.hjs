@@ -30,6 +30,7 @@
     <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
     <script src="/bower_components/underscore/underscore-min.js"></script>
     <script src="/bower_components/underscore.string/dist/underscore.string.min.js"></script>
+    <script src="/bower_components/humanize/humanize.js"></script>
     <script src="/js/dep-shims.js"></script>
 
     <!-- app -->
