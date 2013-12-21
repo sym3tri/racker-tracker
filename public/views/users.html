@@ -23,23 +23,27 @@
 
   <div ng-show="state">{{state}}</div>
 
-  <table ng-hide="state" class="table table-condensed table-hover">
-    <thead>
-      <tr>
-        <td>Name</td>
-        <td>Registered</td>
-        <td>Steps</td>
-        <td>Calories</td>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="user in users">
-        <td>{{user.name}}</td>
-        <td><time datetime="{{user.createdAtISO}}">{{user.createdAtReadable}}</time></td>
-        <td>{{user.steps}}</td>
-        <td>{{user.calories}}</td>
-      </tr>
-    </tbody>
-  </table>
+  <div>&nbsp;</div>
+
+  <div class="panel panel-default">
+    <table ng-hide="state" class="table table-condensed table-hover">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Registered</th>
+          <th>Steps</th>
+          <th>Calories</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="user in users | orderBy:'steps':true">
+          <td>{{user.name}}</td>
+          <td><time datetime="{{user.createdAtISO}}">{{user.createdAtReadable}}</time></td>
+          <td>{{user.steps}}</td>
+          <td>{{user.calories}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
 </div>
